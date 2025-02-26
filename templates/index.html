@@ -181,6 +181,21 @@
             transform: translateX(5px);
         }
 
+        .stats-row.clickable {
+            cursor: pointer;
+        }
+
+        .stats-row.clickable:after {
+            content: '📊';
+            margin-left: 10px;
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+
+        .stats-row.clickable:hover:after {
+            opacity: 1;
+        }
+
         .hidden {
             display: none;
         }
@@ -366,24 +381,24 @@
 
         .chart-container {
             display: none;
-            margin-top: 20px;
-            padding: 20px;
+            margin: 10px 0;
+            padding: 15px;
             background: rgba(26, 27, 46, 0.3);
             border-radius: 8px;
-            height: 450px;
+            height: 300px;
         }
 
         .chart-title {
             font-family: 'Lilita One', cursive;
             color: #FFD700;
-            font-size: 1.5rem;
-            margin-bottom: 15px;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
         }
 
         .chart-subtitle {
             color: #8888A0;
-            font-size: 1rem;
-            margin-bottom: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
             font-family: 'Lilita One', cursive;
         }
 
@@ -590,12 +605,18 @@
                     </div>
                 </div>
                 <div class="card-text">
-                    <div class="stats-row" onclick="toggleChart('combined')">
+                    <div class="stats-row clickable" onclick="toggleChart('combined')">
                         <strong>Trophées:</strong>
                         <div class="stats-value">
                             <span id="trophies"></span>
                             <span id="trophies-trend" class="stats-trend"></span>
                         </div>
+                    </div>
+
+                    <div id="combined-chart" class="chart-container">
+                        <div class="chart-title">Progression des trophées</div>
+                        <div class="chart-subtitle">Évolution des trophées actuels et maximum au fil du temps</div>
+                        <canvas id="combinedCanvas"></canvas>
                     </div>
 
                     <div class="stats-row">
@@ -646,12 +667,6 @@
                     <!-- Brawlers List -->
                     <div id="brawlersList" class="brawlers-container" style="display: none;">
                         <div class="brawlers-grid" id="brawlersGrid"></div>
-                    </div>
-
-                    <div id="combined-chart" class="chart-container">
-                        <div class="chart-title">Progression des trophées</div>
-                        <div class="chart-subtitle">Évolution des trophées actuels et maximum au fil du temps</div>
-                        <canvas id="combinedCanvas"></canvas>
                     </div>
                 </div>
             </div>
@@ -891,6 +906,30 @@
                     document.getElementById('trophies').textContent = data.trophies;
                     document.getElementById('highestTrophies').textContent = data.highestTrophies || data.trophies;
                     document.getElementById('level').textContent = data.expLevel;
+                    
+                    // Charger l'historique des trophées
+                    const historyResponse = await fetch(`/player_history/${data.tag}`);
+                    const historyData = await historyResponse.json();
+                    
+                    // Mettre à jour l'historique avec les données actuelles si nécessaire
+                    const today = new Date().toLocaleDateString();
+                    const lastEntry = historyData[historyData.length - 1];
+                    
+                    if (!lastEntry || lastEntry.date !== today) {
+                        historyData.push({
+                            date: today,
+                            trophies: data.trophies,
+                            highestTrophies: data.highestTrophies || data.trophies
+                        });
+                    } else {
+                        lastEntry.trophies = data.trophies;
+                        lastEntry.highestTrophies = data.highestTrophies || data.trophies;
+                    }
+                    
+                    window.playerHistory = historyData;
+                    
+                    // Afficher le graphique
+                    toggleChart('combined');
                     
                     // Mise à jour des victoires
                     document.getElementById('3vs3-victories').textContent = data['3vs3Victories'];

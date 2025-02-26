@@ -165,7 +165,12 @@ class BrawlStarsAPI:
             
             # Récupération des informations du joueur
             player_url = f"{self.base_url}/players/%23{clean_tag}"
+            print(f"URL de l'API: {player_url}")
+            print(f"Headers: {self.headers}")
+            
             response = requests.get(player_url, headers=self.headers)
+            print(f"Status code: {response.status_code}")
+            print(f"Response: {response.text}")
             
             if response.status_code != 200:
                 print(f"Erreur API: {response.status_code} - {response.text}")
@@ -381,6 +386,20 @@ def update_tag_manually():
         except Exception as e:
             return jsonify({'success': False, 'error': str(e)}), 500
     return jsonify({'success': False, 'error': 'Tag non fourni'}), 400
+
+@app.route('/player_history/<tag>')
+def get_player_history(tag):
+    try:
+        # Nettoyer le tag
+        clean_tag = brawl_stars_api.clean_player_tag(tag)
+        # Charger l'historique
+        brawl_stars_api.load_history()
+        # Récupérer l'historique du joueur
+        history = brawl_stars_api.history.get(clean_tag, [])
+        return jsonify(history)
+    except Exception as e:
+        print(f"Erreur lors de la récupération de l'historique: {e}")
+        return jsonify([])
 
 if __name__ == '__main__':
     app.run(debug=True) 
