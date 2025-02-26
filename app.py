@@ -168,6 +168,7 @@ class BrawlStarsAPI:
             response = requests.get(player_url, headers=self.headers)
             
             if response.status_code != 200:
+                print(f"Erreur API: {response.status_code} - {response.text}")
                 return None
                 
             data = response.json()
