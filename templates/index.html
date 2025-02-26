@@ -908,7 +908,8 @@
                     document.getElementById('level').textContent = data.expLevel;
                     
                     // Charger l'historique des trophées
-                    const historyResponse = await fetch(`/player_history/${data.tag}`);
+                    const cleanTag = data.tag.replace('#', '');
+                    const historyResponse = await fetch(`/player_history/${cleanTag}`);
                     const historyData = await historyResponse.json();
                     
                     // Mettre à jour l'historique avec les données actuelles si nécessaire
