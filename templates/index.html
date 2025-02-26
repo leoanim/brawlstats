@@ -598,6 +598,31 @@
                         </div>
                     </div>
 
+                    <div class="stats-row">
+                        <strong>Niveau:</strong>
+                        <span id="level"></span>
+                    </div>
+
+                    <div class="stats-row">
+                        <strong>Trophées maximum:</strong>
+                        <span id="highestTrophies"></span>
+                    </div>
+
+                    <div class="stats-row">
+                        <strong>Victoires 3v3:</strong>
+                        <span id="3vs3-victories"></span>
+                    </div>
+
+                    <div class="stats-row">
+                        <strong>Victoires Solo:</strong>
+                        <span id="solo-victories"></span>
+                    </div>
+
+                    <div class="stats-row">
+                        <strong>Victoires Duo:</strong>
+                        <span id="duo-victories"></span>
+                    </div>
+
                     <!-- Club Info -->
                     <div class="stats-row">
                         <strong>Club:</strong>
@@ -838,6 +863,8 @@
             
             const playerInfo = document.getElementById('playerInfo');
             const loaderContainer = document.getElementById('loaderContainer');
+            const notification = document.getElementById('notification');
+            const notificationContent = document.getElementById('notificationContent');
             
             // Cacher les résultats précédents et afficher le loader
             playerInfo.classList.add('hidden');
@@ -859,32 +886,24 @@
                 loaderContainer.style.display = 'none';
                 
                 if (response.ok) {
+                    // Mise à jour des informations de base du joueur
                     document.getElementById('playerName').textContent = data.name;
                     document.getElementById('tag').textContent = '#' + data.tag.replace('#', '');
                     document.getElementById('trophies').textContent = data.trophies;
+                    document.getElementById('highestTrophies').textContent = data.highestTrophies || data.trophies;
+                    document.getElementById('level').textContent = data.expLevel;
                     
-                    // Stocker l'historique pour les graphiques
-                    window.playerHistory = data.history;
+                    // Mise à jour des victoires
+                    document.getElementById('3vs3-victories').textContent = data['3vs3Victories'];
+                    document.getElementById('solo-victories').textContent = data.soloVictories;
+                    document.getElementById('duo-victories').textContent = data.duoVictories;
                     
-                    // Afficher la tendance
-                    const trend = data.trend;
-                    const trendText = trend > 0 ? `+${trend}` : trend.toString();
-                    document.getElementById('trophies-trend').textContent = trendText;
-                    document.getElementById('trophies-trend').className = 
-                        `stats-trend ${trend > 0 ? 'trend-positive' : trend < 0 ? 'trend-negative' : 'trend-neutral'}`;
-                    
-                    // Mise à jour de l'icône du joueur avec gestion des erreurs
+                    // Mise à jour de l'icône du joueur
                     const playerIcon = document.getElementById('playerIcon');
-                    if (data.iconUrls) {
-                        playerIcon.onerror = () => {
-                            // Si l'icône principale ne charge pas, utiliser l'icône par défaut
-                            playerIcon.src = data.iconUrls.default;
-                        };
-                        playerIcon.src = data.iconUrls.brawlify;
-                    } else {
-                        // Utiliser une icône par défaut si aucune icône n'est disponible
+                    playerIcon.src = `https://media.brawltime.ninja/avatars/${data.icon.id}.png`;
+                    playerIcon.onerror = () => {
                         playerIcon.src = "https://media.brawltime.ninja/avatars/28000000.png";
-                    }
+                    };
                     
                     // Mise à jour des informations du club
                     const clubName = document.getElementById('clubName');
@@ -892,6 +911,7 @@
                     if (data.club && data.club.name) {
                         clubName.textContent = data.club.name;
                         clubRole.textContent = data.club.role || 'Membre';
+                        clubRole.style.display = 'inline';
                     } else {
                         clubName.textContent = 'Aucun club';
                         clubRole.style.display = 'none';
@@ -900,46 +920,58 @@
                     // Mise à jour de la progression des brawlers
                     const progressBar = document.getElementById('brawlerProgressBar');
                     const progressText = document.getElementById('brawlerProgressText');
-                    const progress = data.brawler_progress;
-                    progressBar.style.width = `${progress.percentage}%`;
-                    progressText.textContent = `${progress.max_power}/${progress.total} (${progress.percentage}%)`;
+                    const maxPowerBrawlers = data.brawlers.filter(b => b.power === 11).length;
+                    const totalBrawlers = data.brawlers.length;
+                    const percentage = Math.round((maxPowerBrawlers / totalBrawlers) * 100);
+                    
+                    progressBar.style.width = `${percentage}%`;
+                    progressText.textContent = `${maxPowerBrawlers}/${totalBrawlers} (${percentage}%)`;
 
                     // Mise à jour de la liste des brawlers
                     const brawlersGrid = document.getElementById('brawlersGrid');
                     brawlersGrid.innerHTML = '';
 
-                    data.brawlers.forEach(brawler => {
+                    data.brawlers.sort((a, b) => b.trophies - a.trophies).forEach(brawler => {
                         const card = document.createElement('div');
                         card.className = 'brawler-card';
                         card.innerHTML = `
                             <div class="brawler-icon">
-                                <img src="${brawler.iconUrl}" alt="${brawler.name}">
+                                <img src="https://media.brawltime.ninja/brawlers/${brawler.id}.png" 
+                                     alt="${brawler.name}"
+                                     onerror="this.src='https://media.brawltime.ninja/brawlers/16000000.png'">
                             </div>
                             <div class="brawler-info">
                                 <div class="brawler-name">${brawler.name}</div>
                                 <div class="brawler-stats">
                                     <div class="brawler-power">Niveau ${brawler.power}</div>
+                                    <div class="brawler-trophies">🏆 ${brawler.trophies}</div>
                                     <div class="brawler-items">
                                         ${brawler.gadgets.map(g => `
                                             <div class="brawler-item active">
-                                                <img src="https://media.brawltime.ninja/gadgets/${g.id}.png" alt="Gadget">
+                                                <img src="https://media.brawltime.ninja/gadgets/${g.id}.png" 
+                                                     alt="${g.name}"
+                                                     title="${g.name}">
                                             </div>
                                         `).join('')}
                                         ${brawler.starPowers.map(sp => `
                                             <div class="brawler-item active">
-                                                <img src="https://media.brawltime.ninja/star-powers/${sp.id}.png" alt="Star Power">
+                                                <img src="https://media.brawltime.ninja/star-powers/${sp.id}.png" 
+                                                     alt="${sp.name}"
+                                                     title="${sp.name}">
                                             </div>
                                         `).join('')}
                                         ${brawler.gears.map(gear => `
                                             <div class="brawler-item active">
-                                                <img src="https://media.brawltime.ninja/gears/${gear.id}.png" alt="Gear">
+                                                <img src="https://media.brawltime.ninja/gears/${gear.id}.png" 
+                                                     alt="${gear.name}"
+                                                     title="${gear.name}">
                                             </div>
                                         `).join('')}
                                     </div>
                                 </div>
                             </div>
                             <div class="brawler-progress">
-                                <div class="brawler-progress-bar" style="width: ${brawler.progress_percentage}%"></div>
+                                <div class="brawler-progress-bar" style="width: ${(brawler.power / 11) * 100}%"></div>
                             </div>
                         `;
                         brawlersGrid.appendChild(card);
@@ -947,10 +979,11 @@
                     
                     playerInfo.classList.remove('hidden');
                 } else {
-                    notificationContent.textContent = data.error;
+                    notificationContent.textContent = "Une erreur s'est produite lors de la recherche du joueur.";
                     notification.classList.add('show');
                 }
             } catch (error) {
+                console.error('Erreur:', error);
                 // Cacher le loader en cas d'erreur
                 loaderContainer.style.display = 'none';
                 notificationContent.textContent = "Une erreur s'est produite lors de la recherche du joueur.";
@@ -988,69 +1021,6 @@
         function toggleBrawlers() {
             const brawlersList = document.getElementById('brawlersList');
             brawlersList.style.display = brawlersList.style.display === 'none' ? 'block' : 'none';
-        }
-
-        function updatePlayerInfo(data) {
-            // ... Code existant ...
-
-            // Mise à jour des informations du club
-            const clubName = document.getElementById('clubName');
-            const clubRole = document.getElementById('clubRole');
-            if (data.club && data.club.name) {
-                clubName.textContent = data.club.name;
-                clubRole.textContent = data.club.role || 'Membre';
-            } else {
-                clubName.textContent = 'Aucun club';
-                clubRole.style.display = 'none';
-            }
-
-            // Mise à jour de la progression des brawlers
-            const progressBar = document.getElementById('brawlerProgressBar');
-            const progressText = document.getElementById('brawlerProgressText');
-            const progress = data.brawler_progress;
-            progressBar.style.width = `${progress.percentage}%`;
-            progressText.textContent = `${progress.max_power}/${progress.total} (${progress.percentage}%)`;
-
-            // Mise à jour de la liste des brawlers
-            const brawlersGrid = document.getElementById('brawlersGrid');
-            brawlersGrid.innerHTML = '';
-
-            data.brawlers.forEach(brawler => {
-                const card = document.createElement('div');
-                card.className = 'brawler-card';
-                card.innerHTML = `
-                    <div class="brawler-icon">
-                        <img src="${brawler.iconUrl}" alt="${brawler.name}">
-                    </div>
-                    <div class="brawler-info">
-                        <div class="brawler-name">${brawler.name}</div>
-                        <div class="brawler-stats">
-                            <div class="brawler-power">Niveau ${brawler.power}</div>
-                            <div class="brawler-items">
-                                ${brawler.gadgets.map(g => `
-                                    <div class="brawler-item active">
-                                        <img src="https://media.brawltime.ninja/gadgets/${g.id}.png" alt="Gadget">
-                                    </div>
-                                `).join('')}
-                                ${brawler.starPowers.map(sp => `
-                                    <div class="brawler-item active">
-                                        <img src="https://media.brawltime.ninja/star-powers/${sp.id}.png" alt="Star Power">
-                                    </div>
-                                `).join('')}
-                                ${brawler.gears.map(gear => `
-                                    <div class="brawler-item active">
-                                        <img src="https://media.brawltime.ninja/gears/${gear.id}.png" alt="Gear">
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="brawler-progress">
-                        <div class="brawler-progress-bar" style="width: ${brawler.progress_percentage}%"></div>
-                    </div>
-                `;
-                brawlersGrid.appendChild(card);
-            });
         }
     </script>
 </body>
