@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrawlStats - Administration</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+    <style>
+        /* Réutilisation des styles de base */
+        body {
+            padding: 20px;
+            background-color: #2B2D42;
+            background-image: linear-gradient(45deg, #2B2D42 25%, #1A1B2E 25%, #1A1B2E 50%, #2B2D42 50%, #2B2D42 75%, #1A1B2E 75%, #1A1B2E);
+            background-size: 56.57px 56.57px;
+            color: #E4E4E4;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1, h2 {
+            font-family: 'Lilita One', cursive;
+            color: #FF6B6B;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .card {
+            margin-top: 20px;
+            border-radius: 15px;
+            background: #32344D;
+            border: 3px solid #FF6B6B;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .form-control {
+            background-color: #1A1B2E;
+            border: 2px solid #FF6B6B;
+            color: #ffffff;
+        }
+
+        .form-control:focus {
+            background-color: #1A1B2E;
+            border-color: #FFD700;
+            color: #ffffff;
+            box-shadow: 0 0 0 0.25rem rgba(255, 107, 107, 0.25);
+        }
+
+        .form-control::placeholder {
+            color: #9999AA;
+        }
+
+        .form-label {
+            color: #FFD700;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: #FF6B6B;
+            border: none;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background-color: #FFD700;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-danger {
+            background-color: #FF4757;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background-color: #FF6B6B;
+        }
+
+        .btn-outline-primary {
+            color: #FF6B6B;
+            border-color: #FF6B6B;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #FF6B6B;
+            color: #ffffff;
+        }
+
+        .tag-item {
+            background: #1A1B2E;
+            padding: 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .tag-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tag-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-refresh {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-refresh:hover {
+            background-color: #45a049;
+            transform: rotate(180deg);
+        }
+
+        .btn-refresh i {
+            transition: transform 0.3s ease;
+        }
+
+        .btn-refresh.loading i {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .tag-item span {
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .timer {
+            font-size: 0.9em;
+            color: #9999AA;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .timer-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 107, 107, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .timer-progress {
+            height: 100%;
+            background: #FFD700;
+            width: 0%;
+            transition: width 1s linear;
+        }
+
+        .timer-text {
+            text-align: right;
+            font-size: 0.85em;
+            color: #FFD700;
+        }
+
+        .table {
+            background-color: #1A1B2E;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .table th {
+            background-color: #2B2D42;
+            color: #FFD700;
+            font-weight: bold;
+            border-bottom: 2px solid #FF6B6B;
+            padding: 15px;
+        }
+
+        .table td {
+            color: #E4E4E4;
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 107, 107, 0.2);
+        }
+
+        .form-check-label {
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        .form-check-input:checked {
+            background-color: #FF6B6B;
+            border-color: #FF6B6B;
+        }
+
+        /* Animation de survol pour les éléments interactifs */
+        .card, .tag-item, .btn {
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .tag-item:hover {
+            border-color: #FF6B6B;
+            background: #252742;
+        }
+
+        /* Style pour les notifications */
+        .custom-notification {
+            position: fixed;
+            top: 20px;
+            right: -400px;
+            background: #32344D;
+            border-left: 4px solid;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 350px;
+        }
+
+        .custom-notification.success {
+            border-color: #4CAF50;
+        }
+
+        .custom-notification.error {
+            border-color: #FF4757;
+        }
+
+        .custom-notification.show {
+            right: 20px;
+        }
+
+        .notification-message {
+            color: #ffffff;
+            margin-right: 15px;
+        }
+
+        .notification-close {
+            color: #8888A0;
+            cursor: pointer;
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .notification-close:hover {
+            color: #ffffff;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Ajout de la notification personnalisée -->
+    <div class="custom-notification" id="customNotification">
+        <span class="notification-message"></span>
+        <span class="notification-close">&times;</span>
+    </div>
+
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Administration BrawlStats</h1>
+            <a href="/" class="btn btn-outline-primary">Retour au site</a>
+        </div>
+
+        <div class="row">
+            <!-- Gestion de la clé API -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h2>Clé API</h2>
+                        <form id="apiKeyForm" action="/admin/update_api_key" method="POST">
+                            <div class="mb-3">
+                                <label for="apiKey" class="form-label">Clé API Brawl Stars</label>
+                                <input type="text" class="form-control" id="apiKey" name="api_key" value="{{ current_api_key }}" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Mettre à jour la clé API</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gestion des tags pour l'actualisation automatique -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h2>Tags à actualiser</h2>
+                        <form id="addTagForm" action="/admin/add_tag" method="POST" class="mb-4">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="tag" placeholder="Entrez un tag joueur" required>
+                                <button type="submit" class="btn btn-primary">Ajouter</button>
+                            </div>
+                        </form>
+
+                        <div id="tagsList">
+                            {% for tag in auto_update_tags %}
+                            <div class="tag-item" data-tag="{{ tag }}">
+                                <div class="tag-item-header">
+                                    <span>{{ tag }}</span>
+                                    <div class="tag-item-actions">
+                                        <button class="btn btn-refresh" onclick="updateTag('{{ tag }}')">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </button>
+                                        <form action="/admin/remove_tag" method="POST" class="d-inline">
+                                            <input type="hidden" name="tag" value="{{ tag }}">
+                                            <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="timer">
+                                    <div class="timer-bar">
+                                        <div class="timer-progress"></div>
+                                    </div>
+                                    <div class="timer-text">--:--:--</div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if is_super_admin %}
+            <!-- Gestion des administrateurs -->
+            <div class="col-12 mt-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h2>Gestion des administrateurs</h2>
+                        <form id="addAdminForm" class="mb-4">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" name="username" placeholder="Nom d'utilisateur" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="password" class="form-control" name="password" placeholder="Mot de passe" required>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="is_super_admin" id="isSuperAdmin">
+                                        <label class="form-check-label" for="isSuperAdmin">Super Admin</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-primary w-100">Ajouter</button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="table-responsive">
+                            <table class="table table-dark">
+                                <thead>
+                                    <tr>
+                                        <th>Nom d'utilisateur</th>
+                                        <th>Super Admin</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for username, user in admin_users.items() %}
+                                    <tr>
+                                        <td>{{ username }}</td>
+                                        <td>{% if user.is_super_admin %}Oui{% else %}Non{% endif %}</td>
+                                        <td>
+                                            <button class="btn btn-danger btn-sm" onclick="removeAdmin('{{ username }}')">
+                                                Supprimer
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Historique des tags -->
+            <div class="col-12 mt-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h2>Historique des tags</h2>
+                        <div class="table-responsive">
+                            <table class="table table-dark">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Tag</th>
+                                        <th>Action</th>
+                                        <th>Administrateur</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for entry in tag_history|reverse %}
+                                    <tr>
+                                        <td>{{ entry.timestamp }}</td>
+                                        <td>{{ entry.tag }}</td>
+                                        <td>
+                                            {% if entry.action == 'ajout' %}
+                                            <span class="badge bg-success">Ajout</span>
+                                            {% elif entry.action == 'suppression' %}
+                                            <span class="badge bg-danger">Suppression</span>
+                                            {% else %}
+                                            <span class="badge bg-info">Actualisation</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ entry.admin }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Fonction pour formater le temps restant
+        function formatTimeRemaining(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        // Fonction pour mettre à jour les timers
+        async function updateTimers() {
+            try {
+                const response = await fetch('/admin/next_update');
+                if (!response.ok) {
+                    throw new Error('Erreur réseau');
+                }
+                const data = await response.json();
+                
+                const tagItems = document.querySelectorAll('.tag-item');
+                const totalTime = 3600; // 1 heure en secondes
+                const remaining = data.next_update;
+                const elapsed = totalTime - remaining;
+                const progressPercent = (elapsed / totalTime) * 100;
+                
+                tagItems.forEach(tagItem => {
+                    // Mettre à jour la barre de progression
+                    const progress = tagItem.querySelector('.timer-progress');
+                    progress.style.width = `${progressPercent}%`;
+                    
+                    // Mettre à jour le texte du timer
+                    const timerText = tagItem.querySelector('.timer-text');
+                    timerText.textContent = formatTimeRemaining(remaining);
+
+                    // Changer la couleur si moins de 5 minutes restantes
+                    if (remaining <= 300) {
+                        timerText.style.color = '#FF4757';
+                        progress.style.backgroundColor = '#FF4757';
+                    } else {
+                        timerText.style.color = '#FFD700';
+                        progress.style.backgroundColor = '#FFD700';
+                    }
+                });
+            } catch (error) {
+                console.error('Erreur lors de la mise à jour des timers:', error);
+            }
+        }
+
+        // Mettre à jour les timers toutes les secondes
+        setInterval(updateTimers, 1000);
+        updateTimers(); // Première mise à jour immédiate
+
+        // Fonction de notification personnalisée
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('customNotification');
+            const messageEl = notification.querySelector('.notification-message');
+            
+            notification.className = `custom-notification ${type}`;
+            messageEl.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Gestionnaire de fermeture de notification
+        document.querySelector('.notification-close').addEventListener('click', () => {
+            document.getElementById('customNotification').classList.remove('show');
+        });
+
+        // Modification de la fonction updateTag
+        async function updateTag(tag) {
+            const button = document.querySelector(`.tag-item[data-tag="${tag}"] .btn-refresh`);
+            const icon = button.querySelector('i');
+            
+            try {
+                button.disabled = true;
+                button.classList.add('loading');
+                
+                const formData = new FormData();
+                formData.append('tag', tag);
+                
+                const response = await fetch('/admin/update_tag', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateTimers();
+                    showNotification('Tag actualisé avec succès');
+                } else {
+                    throw new Error(data.error || 'Erreur lors de l\'actualisation');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showNotification(error.message || 'Erreur lors de l\'actualisation du tag', 'error');
+            } finally {
+                button.disabled = false;
+                button.classList.remove('loading');
+            }
+        }
+
+        // Modification de la gestion des administrateurs
+        document.getElementById('addAdminForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            formData.set('is_super_admin', this.querySelector('#isSuperAdmin').checked);
+            
+            fetch('/admin/add_admin', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    showNotification(data.error || 'Erreur lors de l\'ajout de l\'administrateur', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showNotification('Erreur lors de l\'ajout de l\'administrateur', 'error');
+            });
+        });
+
+        function removeAdmin(username) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cet administrateur ?')) {
+                const formData = new FormData();
+                formData.append('username', username);
+                
+                fetch('/admin/remove_admin', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        showNotification(data.error || 'Erreur lors de la suppression de l\'administrateur', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showNotification('Erreur lors de la suppression de l\'administrateur', 'error');
+                });
+            }
+        }
+
+        // Modification des formulaires pour utiliser AJAX
+        document.getElementById('addTagForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            
+            try {
+                const response = await fetch('/admin/add_tag', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showNotification(data.error, 'error');
+                }
+            } catch (error) {
+                showNotification('Erreur lors de l\'ajout du tag', 'error');
+            }
+        });
+
+        // Modification de la suppression de tag
+        document.querySelectorAll('form[action="/admin/remove_tag"]').forEach(form => {
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                
+                try {
+                    const response = await fetch('/admin/remove_tag', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showNotification(data.message, 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showNotification(data.error, 'error');
+                    }
+                } catch (error) {
+                    showNotification('Erreur lors de la suppression du tag', 'error');
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

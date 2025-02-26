@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrawlStats</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bs-primary: #F54E42;
+            --bs-primary-rgb: 245, 78, 66;
+        }
+
+        body {
+            padding: 20px;
+            background-color: #2B2D42;
+            background-image: linear-gradient(45deg, #2B2D42 25%, #1A1B2E 25%, #1A1B2E 50%, #2B2D42 50%, #2B2D42 75%, #1A1B2E 75%, #1A1B2E);
+            background-size: 56.57px 56.57px;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-family: 'Lilita One', cursive;
+            color: #F54E42;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-size: 3.5rem;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            margin-top: 20px;
+            border-radius: 15px;
+            background: #32344D;
+            border: 3px solid #F54E42;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .form-control {
+            background-color: #1A1B2E;
+            border: 2px solid #F54E42;
+            color: #ffffff;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 1.1rem;
+        }
+
+        .form-control:focus {
+            background-color: #1A1B2E;
+            border-color: #FFD700;
+            color: #ffffff;
+            box-shadow: 0 0 0 0.25rem rgba(255, 215, 0, 0.25);
+        }
+
+        .form-control::placeholder {
+            color: #8888A0;
+        }
+
+        .btn-primary {
+            background-color: #F54E42;
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #FFD700;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            color: #FFD700;
+            font-family: 'Lilita One', cursive;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .profile-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            background: #1A1B2E;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 0;
+            box-shadow: 0 0 10px rgba(245, 78, 66, 0.5);
+        }
+
+        .profile-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .profile-info {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .player-name {
+            font-family: 'Lilita One', cursive;
+            font-size: 2.2rem;
+            color: #FFD700;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .player-tag {
+            font-size: 1.1rem;
+            color: #8888A0;
+            margin: 0;
+            font-family: 'Lilita One', cursive;
+            opacity: 0.8;
+        }
+
+        .card-text strong {
+            color: #F54E42;
+            font-size: 1.1rem;
+        }
+
+        .card-text span {
+            color: #ffffff;
+            font-size: 1.1rem;
+            margin-left: 5px;
+        }
+
+        .alert-danger {
+            background-color: #32344D;
+            border-color: #F54E42;
+            color: #F54E42;
+            border-radius: 10px;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(26, 27, 46, 0.5);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .stats-row:hover {
+            background: rgba(26, 27, 46, 0.8);
+            transform: translateX(5px);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px #F54E42; }
+            50% { box-shadow: 0 0 20px #F54E42; }
+            100% { box-shadow: 0 0 5px #F54E42; }
+        }
+
+        .card:hover {
+            animation: glow 2s infinite;
+        }
+
+        /* Animation de chargement */
+        .loader-container {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            margin: 50px 0;
+            flex-direction: column;
+        }
+
+        .cube-container {
+            --uib-size: 60px;
+            --uib-color: #F54E42;
+            --uib-speed: 1.75s;
+            display: flex;
+            align-items: flex-end;
+            padding-bottom: 0;
+            justify-content: space-between;
+            width: var(--uib-size);
+            height: calc(var(--uib-size) * 0.6);
+        }
+
+        .cube {
+            flex-shrink: 0;
+            width: calc(var(--uib-size) * 0.2);
+            height: calc(var(--uib-size) * 0.2);
+            animation: jump var(--uib-speed) ease-in-out infinite;
+        }
+
+        .cube__inner {
+            display: block;
+            height: 100%;
+            width: 100%;
+            border-radius: 25%;
+            background-color: var(--uib-color);
+            transform-origin: center bottom;
+            animation: morph var(--uib-speed) ease-in-out infinite;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 0 15px var(--uib-color);
+        }
+
+        .cube:nth-child(2) {
+            animation-delay: calc(var(--uib-speed) * -0.36);
+        }
+
+        .cube:nth-child(2) .cube__inner {
+            animation-delay: calc(var(--uib-speed) * -0.36);
+        }
+
+        .cube:nth-child(3) {
+            animation-delay: calc(var(--uib-speed) * -0.2);
+        }
+
+        .cube:nth-child(3) .cube__inner {
+            animation-delay: calc(var(--uib-speed) * -0.2);
+        }
+
+        @keyframes jump {
+            0% {
+                transform: translateY(0px);
+            }
+
+            30% {
+                transform: translateY(0px);
+                animation-timing-function: ease-out;
+            }
+
+            50% {
+                transform: translateY(-200%);
+                animation-timing-function: ease-in;
+            }
+
+            75% {
+                transform: translateY(0px);
+                animation-timing-function: ease-in;
+            }
+        }
+
+        @keyframes morph {
+            0% {
+                transform: scaleY(1);
+            }
+
+            10% {
+                transform: scaleY(1);
+            }
+
+            20%,
+            25% {
+                transform: scaleY(0.6) scaleX(1.3);
+                animation-timing-function: ease-in-out;
+            }
+
+            30% {
+                transform: scaleY(1.15) scaleX(0.9);
+                animation-timing-function: ease-in-out;
+            }
+
+            40% {
+                transform: scaleY(1);
+            }
+
+            70%,
+            85%,
+            100% {
+                transform: scaleY(1);
+            }
+
+            75% {
+                transform: scaleY(0.8) scaleX(1.2);
+            }
+        }
+
+        .loading-text {
+            font-family: 'Lilita One', cursive;
+            color: #F54E42;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 1.4rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: textGlow 2s infinite;
+        }
+
+        @keyframes textGlow {
+            0%, 100% { text-shadow: 0 0 5px #F54E42; }
+            50% { text-shadow: 0 0 20px #F54E42; }
+        }
+
+        /* Style de la notification d'erreur */
+        .notification {
+            position: fixed;
+            right: -400px;
+            top: 20px;
+            width: 350px;
+            background: #32344D;
+            border-left: 4px solid #F54E42;
+            border-radius: 8px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: right 0.4s ease-in-out;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            right: 20px;
+        }
+
+        .notification-content {
+            color: #ffffff;
+            flex-grow: 1;
+            margin-right: 15px;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: #F54E42;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .notification-close:hover {
+            color: #ff6b61;
+        }
+
+        .chart-container {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(26, 27, 46, 0.3);
+            border-radius: 8px;
+            height: 450px;
+        }
+
+        .chart-title {
+            font-family: 'Lilita One', cursive;
+            color: #FFD700;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .chart-subtitle {
+            color: #8888A0;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            font-family: 'Lilita One', cursive;
+        }
+
+        .stats-value {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats-trend {
+            font-size: 0.9rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Lilita One', cursive;
+        }
+
+        .trend-positive {
+            color: #00FF00;
+        }
+
+        .trend-negative {
+            color: #FF0000;
+        }
+
+        .trend-neutral {
+            color: #8888A0;
+        }
+
+        .club-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .club-role {
+            font-size: 0.9em;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+        }
+
+        .brawler-progress {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .progress {
+            flex: 1;
+            height: 8px;
+            background: rgba(255, 107, 107, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #FFD700;
+            transition: width 0.3s ease;
+        }
+
+        .brawlers-container {
+            margin-top: 20px;
+            background: rgba(26, 27, 46, 0.5);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .brawlers-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .brawler-card {
+            background: #32344D;
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .brawler-card:hover {
+            border-color: #FFD700;
+            transform: translateX(5px);
+        }
+
+        .brawler-icon {
+            width: 50px;
+            height: 50px;
+            margin: 0 15px 0 0;
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .brawler-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+
+        .brawler-name {
+            font-family: 'Lilita One', cursive;
+            color: #FFD700;
+            margin: 0;
+            font-size: 1.2em;
+        }
+
+        .brawler-stats {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .brawler-power {
+            color: #FF6B6B;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .brawler-items {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .brawler-item {
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            background: rgba(255, 215, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brawler-item img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .brawler-item.active {
+            background: rgba(255, 215, 0, 0.8);
+        }
+
+        .brawler-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 107, 107, 0.2);
+        }
+
+        .brawler-progress-bar {
+            height: 100%;
+            background: #FFD700;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>BrawlStats</h1>
+            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
+                <i class="fas fa-lock"></i> Administration
+            </button>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <form id="searchForm" class="mb-3">
+                    <div class="mb-3">
+                        <input type="text" 
+                               class="form-control" 
+                               id="playerTag" 
+                               placeholder="Entrez le tag du joueur (ex: 2Y02L2)"
+                               required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Rechercher</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="playerInfo" class="card hidden">
+            <div class="card-body">
+                <div class="profile-header">
+                    <div class="profile-icon">
+                        <img id="playerIcon" src="" alt="Icône du joueur">
+                    </div>
+                    <div class="profile-info">
+                        <h3 id="playerName" class="player-name"></h3>
+                        <p id="tag" class="player-tag"></p>
+                    </div>
+                </div>
+                <div class="card-text">
+                    <div class="stats-row" onclick="toggleChart('combined')">
+                        <strong>Trophées:</strong>
+                        <div class="stats-value">
+                            <span id="trophies"></span>
+                            <span id="trophies-trend" class="stats-trend"></span>
+                        </div>
+                    </div>
+
+                    <!-- Club Info -->
+                    <div class="stats-row">
+                        <strong>Club:</strong>
+                        <div class="club-info">
+                            <span id="clubName"></span>
+                            <span id="clubRole" class="club-role"></span>
+                        </div>
+                    </div>
+
+                    <!-- Brawlers Progress -->
+                    <div class="stats-row" onclick="toggleBrawlers()">
+                        <strong>Progression des Brawlers:</strong>
+                        <div class="brawler-progress">
+                            <div class="progress">
+                                <div id="brawlerProgressBar" class="progress-bar" role="progressbar"></div>
+                            </div>
+                            <span id="brawlerProgressText"></span>
+                        </div>
+                    </div>
+
+                    <!-- Brawlers List -->
+                    <div id="brawlersList" class="brawlers-container" style="display: none;">
+                        <div class="brawlers-grid" id="brawlersGrid"></div>
+                    </div>
+
+                    <div id="combined-chart" class="chart-container">
+                        <div class="chart-title">Progression des trophées</div>
+                        <div class="chart-subtitle">Évolution des trophées actuels et maximum au fil du temps</div>
+                        <canvas id="combinedCanvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="notification" id="errorMessage">
+            <div class="notification-content"></div>
+            <button class="notification-close">&times;</button>
+        </div>
+
+        <div class="loader-container" id="loaderContainer">
+            <div class="cube-container">
+                <div class="cube"><div class="cube__inner"></div></div>
+                <div class="cube"><div class="cube__inner"></div></div>
+                <div class="cube"><div class="cube__inner"></div></div>
+            </div>
+            <div class="loading-text">Chargement des statistiques...</div>
+        </div>
+    </div>
+
+    <!-- Modal de connexion -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Connexion Administrateur</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm" action="/admin/login" method="POST">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Nom d'utilisateur</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Mot de passe</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="alert alert-danger d-none" id="loginError"></div>
+                        <button type="submit" class="btn btn-primary w-100">Se connecter</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ajout de Font Awesome et Bootstrap JS -->
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const notification = document.getElementById('errorMessage');
+        const closeNotification = notification.querySelector('.notification-close');
+        const notificationContent = notification.querySelector('.notification-content');
+
+        closeNotification.addEventListener('click', () => {
+            notification.classList.remove('show');
+        });
+
+        let currentChart = null;
+        let currentChartType = null;
+
+        function toggleChart(type) {
+            const chartContainer = document.getElementById(`${type}-chart`);
+            const allCharts = document.querySelectorAll('.chart-container');
+
+            // Fermer tous les autres graphiques
+            allCharts.forEach(chart => {
+                if (chart.id !== `${type}-chart`) {
+                    chart.style.display = 'none';
+                }
+            });
+
+            // Basculer l'affichage du graphique sélectionné
+            if (chartContainer.style.display === 'none' || !chartContainer.style.display) {
+                chartContainer.style.display = 'block';
+                if (currentChart) {
+                    currentChart.destroy();
+                }
+                createChart(type);
+                currentChartType = type;
+            } else {
+                chartContainer.style.display = 'none';
+                if (currentChart) {
+                    currentChart.destroy();
+                    currentChart = null;
+                }
+                currentChartType = null;
+            }
+        }
+
+        function createChart(type) {
+            const ctx = document.getElementById(`${type}Canvas`).getContext('2d');
+            
+            // Utiliser les données réelles de l'historique
+            const history = window.playerHistory || [];
+            const dates = history.map(entry => entry.date);
+            const trophiesValues = history.map(entry => entry.trophies);
+            const highestTrophiesValues = history.map(entry => entry.highestTrophies);
+
+            currentChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Trophées actuels',
+                        data: trophiesValues,
+                        borderColor: '#FFD700',
+                        backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 5,
+                        pointHoverRadius: 8
+                    },
+                    {
+                        label: 'Trophées maximum',
+                        data: highestTrophiesValues,
+                        borderColor: '#F54E42',
+                        backgroundColor: 'rgba(245, 78, 66, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 5,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            bottom: 60,
+                            left: 15,
+                            right: 15,
+                            top: 10
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    family: 'Lilita One',
+                                    size: 12
+                                },
+                                color: '#8888A0'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#32344D',
+                            titleFont: {
+                                family: 'Lilita One'
+                            },
+                            bodyFont: {
+                                family: 'Arial'
+                            },
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y} trophées`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#8888A0',
+                                font: {
+                                    family: 'Lilita One'
+                                },
+                                callback: function(value) {
+                                    return Math.round(value);
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#8888A0',
+                                maxRotation: 30,
+                                minRotation: 30,
+                                font: {
+                                    family: 'Lilita One',
+                                    size: 11
+                                },
+                                autoSkip: true,
+                                maxTicksLimit: 6,
+                                padding: 10,
+                                offset: true
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        document.getElementById('searchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            let playerTag = document.getElementById('playerTag').value.trim();
+            // Ajouter le # si ce n'est pas déjà fait
+            if (!playerTag.startsWith('#')) {
+                playerTag = '#' + playerTag;
+            }
+            
+            const playerInfo = document.getElementById('playerInfo');
+            const loaderContainer = document.getElementById('loaderContainer');
+            
+            // Cacher les résultats précédents et afficher le loader
+            playerInfo.classList.add('hidden');
+            notification.classList.remove('show');
+            loaderContainer.style.display = 'flex';
+            
+            try {
+                const response = await fetch('/search_player', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `player_tag=${encodeURIComponent(playerTag.substring(1))}`  // On enlève le # pour l'API
+                });
+                
+                const data = await response.json();
+                
+                // Cacher le loader
+                loaderContainer.style.display = 'none';
+                
+                if (response.ok) {
+                    document.getElementById('playerName').textContent = data.name;
+                    document.getElementById('tag').textContent = '#' + data.tag.replace('#', '');
+                    document.getElementById('trophies').textContent = data.trophies;
+                    
+                    // Stocker l'historique pour les graphiques
+                    window.playerHistory = data.history;
+                    
+                    // Afficher la tendance
+                    const trend = data.trend;
+                    const trendText = trend > 0 ? `+${trend}` : trend.toString();
+                    document.getElementById('trophies-trend').textContent = trendText;
+                    document.getElementById('trophies-trend').className = 
+                        `stats-trend ${trend > 0 ? 'trend-positive' : trend < 0 ? 'trend-negative' : 'trend-neutral'}`;
+                    
+                    // Mise à jour de l'icône du joueur avec gestion des erreurs
+                    const playerIcon = document.getElementById('playerIcon');
+                    if (data.iconUrls) {
+                        playerIcon.onerror = () => {
+                            // Si l'icône principale ne charge pas, utiliser l'icône par défaut
+                            playerIcon.src = data.iconUrls.default;
+                        };
+                        playerIcon.src = data.iconUrls.brawlify;
+                    } else {
+                        // Utiliser une icône par défaut si aucune icône n'est disponible
+                        playerIcon.src = "https://media.brawltime.ninja/avatars/28000000.png";
+                    }
+                    
+                    // Mise à jour des informations du club
+                    const clubName = document.getElementById('clubName');
+                    const clubRole = document.getElementById('clubRole');
+                    if (data.club && data.club.name) {
+                        clubName.textContent = data.club.name;
+                        clubRole.textContent = data.club.role || 'Membre';
+                    } else {
+                        clubName.textContent = 'Aucun club';
+                        clubRole.style.display = 'none';
+                    }
+
+                    // Mise à jour de la progression des brawlers
+                    const progressBar = document.getElementById('brawlerProgressBar');
+                    const progressText = document.getElementById('brawlerProgressText');
+                    const progress = data.brawler_progress;
+                    progressBar.style.width = `${progress.percentage}%`;
+                    progressText.textContent = `${progress.max_power}/${progress.total} (${progress.percentage}%)`;
+
+                    // Mise à jour de la liste des brawlers
+                    const brawlersGrid = document.getElementById('brawlersGrid');
+                    brawlersGrid.innerHTML = '';
+
+                    data.brawlers.forEach(brawler => {
+                        const card = document.createElement('div');
+                        card.className = 'brawler-card';
+                        card.innerHTML = `
+                            <div class="brawler-icon">
+                                <img src="${brawler.iconUrl}" alt="${brawler.name}">
+                            </div>
+                            <div class="brawler-info">
+                                <div class="brawler-name">${brawler.name}</div>
+                                <div class="brawler-stats">
+                                    <div class="brawler-power">Niveau ${brawler.power}</div>
+                                    <div class="brawler-items">
+                                        ${brawler.gadgets.map(g => `
+                                            <div class="brawler-item active">
+                                                <img src="https://media.brawltime.ninja/gadgets/${g.id}.png" alt="Gadget">
+                                            </div>
+                                        `).join('')}
+                                        ${brawler.starPowers.map(sp => `
+                                            <div class="brawler-item active">
+                                                <img src="https://media.brawltime.ninja/star-powers/${sp.id}.png" alt="Star Power">
+                                            </div>
+                                        `).join('')}
+                                        ${brawler.gears.map(gear => `
+                                            <div class="brawler-item active">
+                                                <img src="https://media.brawltime.ninja/gears/${gear.id}.png" alt="Gear">
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="brawler-progress">
+                                <div class="brawler-progress-bar" style="width: ${brawler.progress_percentage}%"></div>
+                            </div>
+                        `;
+                        brawlersGrid.appendChild(card);
+                    });
+                    
+                    playerInfo.classList.remove('hidden');
+                } else {
+                    notificationContent.textContent = data.error;
+                    notification.classList.add('show');
+                }
+            } catch (error) {
+                // Cacher le loader en cas d'erreur
+                loaderContainer.style.display = 'none';
+                notificationContent.textContent = "Une erreur s'est produite lors de la recherche du joueur.";
+                notification.classList.add('show');
+            }
+        });
+
+        // Gestion du formulaire de connexion admin
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            fetch('/admin/login', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/admin';
+                } else {
+                    const errorDiv = document.getElementById('loginError');
+                    errorDiv.textContent = data.error;
+                    errorDiv.classList.remove('d-none');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                const errorDiv = document.getElementById('loginError');
+                errorDiv.textContent = 'Erreur de connexion';
+                errorDiv.classList.remove('d-none');
+            });
+        });
+
+        function toggleBrawlers() {
+            const brawlersList = document.getElementById('brawlersList');
+            brawlersList.style.display = brawlersList.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function updatePlayerInfo(data) {
+            // ... Code existant ...
+
+            // Mise à jour des informations du club
+            const clubName = document.getElementById('clubName');
+            const clubRole = document.getElementById('clubRole');
+            if (data.club && data.club.name) {
+                clubName.textContent = data.club.name;
+                clubRole.textContent = data.club.role || 'Membre';
+            } else {
+                clubName.textContent = 'Aucun club';
+                clubRole.style.display = 'none';
+            }
+
+            // Mise à jour de la progression des brawlers
+            const progressBar = document.getElementById('brawlerProgressBar');
+            const progressText = document.getElementById('brawlerProgressText');
+            const progress = data.brawler_progress;
+            progressBar.style.width = `${progress.percentage}%`;
+            progressText.textContent = `${progress.max_power}/${progress.total} (${progress.percentage}%)`;
+
+            // Mise à jour de la liste des brawlers
+            const brawlersGrid = document.getElementById('brawlersGrid');
+            brawlersGrid.innerHTML = '';
+
+            data.brawlers.forEach(brawler => {
+                const card = document.createElement('div');
+                card.className = 'brawler-card';
+                card.innerHTML = `
+                    <div class="brawler-icon">
+                        <img src="${brawler.iconUrl}" alt="${brawler.name}">
+                    </div>
+                    <div class="brawler-info">
+                        <div class="brawler-name">${brawler.name}</div>
+                        <div class="brawler-stats">
+                            <div class="brawler-power">Niveau ${brawler.power}</div>
+                            <div class="brawler-items">
+                                ${brawler.gadgets.map(g => `
+                                    <div class="brawler-item active">
+                                        <img src="https://media.brawltime.ninja/gadgets/${g.id}.png" alt="Gadget">
+                                    </div>
+                                `).join('')}
+                                ${brawler.starPowers.map(sp => `
+                                    <div class="brawler-item active">
+                                        <img src="https://media.brawltime.ninja/star-powers/${sp.id}.png" alt="Star Power">
+                                    </div>
+                                `).join('')}
+                                ${brawler.gears.map(gear => `
+                                    <div class="brawler-item active">
+                                        <img src="https://media.brawltime.ninja/gears/${gear.id}.png" alt="Gear">
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="brawler-progress">
+                        <div class="brawler-progress-bar" style="width: ${brawler.progress_percentage}%"></div>
+                    </div>
+                `;
+                brawlersGrid.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html> 
