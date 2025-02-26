@@ -863,12 +863,11 @@
             
             const playerInfo = document.getElementById('playerInfo');
             const loaderContainer = document.getElementById('loaderContainer');
-            const notification = document.getElementById('notification');
-            const notificationContent = document.getElementById('notificationContent');
+            const errorMessage = document.getElementById('errorMessage');
             
             // Cacher les résultats précédents et afficher le loader
             playerInfo.classList.add('hidden');
-            notification.classList.remove('show');
+            errorMessage.classList.remove('show');
             loaderContainer.style.display = 'flex';
             
             try {
@@ -979,15 +978,17 @@
                     
                     playerInfo.classList.remove('hidden');
                 } else {
-                    notificationContent.textContent = "Une erreur s'est produite lors de la recherche du joueur.";
-                    notification.classList.add('show');
+                    const errorContent = document.querySelector('#errorMessage .notification-content');
+                    errorContent.textContent = "Une erreur s'est produite lors de la recherche du joueur.";
+                    errorMessage.classList.add('show');
                 }
             } catch (error) {
                 console.error('Erreur:', error);
                 // Cacher le loader en cas d'erreur
                 loaderContainer.style.display = 'none';
-                notificationContent.textContent = "Une erreur s'est produite lors de la recherche du joueur.";
-                notification.classList.add('show');
+                const errorContent = document.querySelector('#errorMessage .notification-content');
+                errorContent.textContent = "Une erreur s'est produite lors de la recherche du joueur.";
+                errorMessage.classList.add('show');
             }
         });
 
