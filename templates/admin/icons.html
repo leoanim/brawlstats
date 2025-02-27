@@ -1,0 +1,139 @@
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrawlStats - Gestion des Icônes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+    <link href="/static/css/styles.css" rel="stylesheet">
+</head>
+<body class="admin">
+    <div class="container">
+        <h1>Gestion des Icônes</h1>
+        
+        <div class="admin-icons-panel">
+            <h2>Icônes du site</h2>
+            <div class="admin-icons-grid">
+                {% for icon in icons %}
+                <div class="admin-icon-item">
+                    <div class="admin-icon-preview" 
+                         ondrop="handleDrop(event, '{{ icon.category }}')" 
+                         ondragover="handleDragOver(event)" 
+                         ondragleave="handleDragLeave(event)">
+                        <img id="{{ icon.category }}Preview" 
+                             src="{{ icon.current_path }}" 
+                             alt="{{ icon.category }}"
+                             onerror="this.src='/static/img/error.png'">
+                        <input type="file" 
+                               class="admin-icon-upload"
+                               accept="image/*"
+                               onchange="handleFileSelect(event, '{{ icon.category }}')" />
+                    </div>
+                    <div class="admin-icon-info">
+                        <div class="admin-icon-category">{{ icon.display_name }}</div>
+                        <div id="{{ icon.category }}Path" class="admin-icon-path">{{ icon.current_path }}</div>
+                    </div>
+                    <div class="admin-icon-actions">
+                        <button onclick="resetIcon('{{ icon.category }}')">Réinitialiser</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div id="notification" class="notification" style="display: none;"></div>
+    </div>
+
+    <script>
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(event) {
+            event.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(event, category) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('dragover');
+            
+            const file = event.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                uploadImage(file, category);
+            }
+        }
+
+        function handleFileSelect(event, category) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                uploadImage(file, category);
+            }
+        }
+
+        async function uploadImage(file, category) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('category', category);
+
+            try {
+                const response = await fetch('/admin/upload_icon', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    const img = document.querySelector(`#${category}Preview`);
+                    if (img) {
+                        img.src = data.path;
+                        document.querySelector(`#${category}Path`).textContent = data.path;
+                        showNotification('Icône mise à jour avec succès', 'success');
+                    }
+                } else {
+                    showNotification(data.error || 'Erreur lors de la mise à jour de l\'icône', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showNotification('Erreur lors de la mise à jour de l\'icône', 'error');
+            }
+        }
+
+        async function resetIcon(category) {
+            try {
+                const response = await fetch('/admin/reset_icon', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ category })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    const img = document.querySelector(`#${category}Preview`);
+                    if (img) {
+                        img.src = data.path;
+                        document.querySelector(`#${category}Path`).textContent = data.path;
+                        showNotification('Icône réinitialisée avec succès', 'success');
+                    }
+                } else {
+                    showNotification(data.error || 'Erreur lors de la réinitialisation de l\'icône', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showNotification('Erreur lors de la réinitialisation de l\'icône', 'error');
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+<!DOCTYPE html>
+ 

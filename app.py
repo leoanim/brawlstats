@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
-import requests
 import os
-from dotenv import load_dotenv
 import json
-from datetime import datetime
 import time
+import requests
+from datetime import datetime
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from dotenv import load_dotenv
 from functools import wraps
 import threading
 import schedule
@@ -19,6 +19,18 @@ app.secret_key = os.getenv('FLASK_SECRET_KEY', 'default-secret-key')  # À chang
 AUTO_UPDATE_TAGS_FILE = "auto_update_tags.json"
 ADMIN_USERS_FILE = "admin_users.json"
 TAG_HISTORY_FILE = "tag_history.json"
+ICONS_CONFIG_FILE = "icons_config.json"
+
+# Configuration par défaut des icônes
+DEFAULT_ICONS = {
+    "trophies": "https://media.brawltime.ninja/trophies.png",
+    "level": "https://media.brawltime.ninja/level.png",
+    "3vs3": "https://media.brawltime.ninja/3vs3.png",
+    "solo": "https://media.brawltime.ninja/solo.png",
+    "duo": "https://media.brawltime.ninja/duo.png",
+    "club": "https://media.brawltime.ninja/club.png",
+    "brawlers": "https://media.brawltime.ninja/brawlers.png"
+}
 
 # Variable pour suivre la dernière mise à jour
 LAST_UPDATE_TIME = time.time()
@@ -80,6 +92,18 @@ def add_to_history(tag, action, admin_username):
     })
     save_tag_history(history)
 
+def load_icons():
+    if os.path.exists(ICONS_CONFIG_FILE):
+        with open(ICONS_CONFIG_FILE, 'r') as f:
+            return json.load(f)
+    # Créer le fichier avec les icônes par défaut si n'existe pas
+    save_icons(DEFAULT_ICONS)
+    return DEFAULT_ICONS
+
+def save_icons(icons):
+    with open(ICONS_CONFIG_FILE, 'w') as f:
+        json.dump(icons, f, indent=4)
+
 # Décorateur pour protéger les routes admin
 def admin_required(f):
     @wraps(f)
@@ -99,14 +123,17 @@ def super_admin_required(f):
     return decorated_function
 
 class BrawlStarsAPI:
-    def __init__(self, api_key):
-        self.api_key = api_key
+    def __init__(self, api_key=None):
+        # Clé API par défaut si aucune n'est fournie
+        self.api_key = api_key or "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjczNTU5OGIxLWU4NGQtNDUwMy1hMWU4LTljZWIzNzczZjNkMSIsImlhdCI6MTc0MDY1MjM3NSwic3ViIjoiZGV2ZWxvcGVyLzNjYWIwYTBhLWQyMDktNmRlYi0yNTRiLWQxZmJmODIxYjFlMCIsInNjb3BlcyI6WyJicmF3bHN0YXJzIl0sImxpbWl0cyI6W3sidGllciI6ImRldmVsb3Blci9zaWx2ZXIiLCJ0eXBlIjoidGhyb3R0bGluZyJ9LHsiY2lkcnMiOlsiMTk1LjIyMC4wLjU4Il0sInR5cGUiOiJjbGllbnQifV19.qv_pyCCg1Z8oNmla8Dv6pBDTUThbYkjV4jQQwLYtVswH6hls5skQuCSXP5bYdWcFvLxleHyJw9mkm-NtYzojfQ"
         self.base_url = "https://api.brawlstars.com/v1"
         self.headers = {
-            "Authorization": f"Bearer {api_key}",
+            "Authorization": f"Bearer {self.api_key}",
             "Accept": "application/json"
         }
         self.history_file = "player_history.json"
+        self.max_retries = 3
+        self.retry_delay = 1  # délai en secondes
         self.load_history()
 
     def load_history(self):
@@ -161,21 +188,44 @@ class BrawlStarsAPI:
     def get_player_info(self, tag):
         try:
             # Nettoyage du tag
-            clean_tag = tag.upper().replace('#', '')
-            
-            # Récupération des informations du joueur
+            clean_tag = self.clean_player_tag(tag)
             player_url = f"{self.base_url}/players/%23{clean_tag}"
-            print(f"URL de l'API: {player_url}")
-            print(f"Headers: {self.headers}")
             
-            response = requests.get(player_url, headers=self.headers)
-            print(f"Status code: {response.status_code}")
-            print(f"Response: {response.text}")
+            # Tentatives de connexion avec délai
+            for attempt in range(self.max_retries):
+                try:
+                    print(f"URL de l'API: {player_url}")
+                    print(f"Headers: {self.headers}")
+                    
+                    response = requests.get(player_url, headers=self.headers, timeout=10)
+                    print(f"Status code: {response.status_code}")
+                    print(f"Response: {response.text}")
+                    
+                    if response.status_code == 403:
+                        return {"error": "Accès refusé. La clé API n'est pas valide ou a expiré."}
+                    elif response.status_code == 404:
+                        return {"error": "Joueur non trouvé. Vérifiez que le tag est correct."}
+                    elif response.status_code == 429:
+                        return {"error": "Trop de requêtes. Veuillez réessayer dans quelques minutes."}
+                    elif response.status_code == 503:
+                        return {"error": "Le service Brawl Stars est temporairement indisponible."}
+                    elif response.status_code != 200:
+                        return {"error": f"Erreur {response.status_code}: {response.text}"}
+                    
+                    break  # Sortir de la boucle si la requête réussit
+                    
+                except requests.exceptions.ConnectionError:
+                    if attempt == self.max_retries - 1:  # Dernière tentative
+                        return {"error": "Impossible de se connecter à l'API Brawl Stars. Vérifiez votre connexion internet."}
+                    time.sleep(self.retry_delay * (attempt + 1))  # Délai progressif
+                    continue
+                    
+                except requests.exceptions.Timeout:
+                    if attempt == self.max_retries - 1:
+                        return {"error": "Le serveur Brawl Stars met trop de temps à répondre. Réessayez plus tard."}
+                    time.sleep(self.retry_delay * (attempt + 1))
+                    continue
             
-            if response.status_code != 200:
-                print(f"Erreur API: {response.status_code} - {response.text}")
-                return None
-                
             data = response.json()
             
             # Récupération des informations du club si le joueur est dans un club
@@ -215,13 +265,26 @@ class BrawlStarsAPI:
                 'percentage': progress_percentage
             }
 
-            return data
+            player_data = {
+                'tag': data['tag'],
+                'name': data['name'],
+                'trophies': data['trophies'],
+                'expLevel': data.get('expLevel', 0),
+                '3vs3Victories': data.get('3vs3Victories', 0),
+                'soloVictories': data.get('soloVictories', 0),
+                'duoVictories': data.get('duoVictories', 0),
+                'club': data.get('club', None),
+                'brawlers': data.get('brawlers', []),
+                'icon': data.get('icon', None)
+            }
+
+            return player_data
         except Exception as e:
             print(f"Erreur lors de la récupération des informations du joueur: {e}")
-            return None
+            return {"error": "Une erreur inattendue s'est produite. Réessayez plus tard."}
 
 # Création de l'instance de l'API
-brawl_stars_api = BrawlStarsAPI(os.getenv('BRAWL_STARS_API_KEY'))
+brawl_stars_api = BrawlStarsAPI()
 
 # Fonction d'actualisation automatique
 def auto_update_players():
@@ -277,12 +340,14 @@ def admin_panel():
     is_super = is_super_admin()
     admin_users = load_admin_users() if is_super else {}
     tag_history = load_tag_history()
+    icons = load_icons()
     return render_template('admin.html',
                          current_api_key=brawl_stars_api.api_key,
                          auto_update_tags=load_auto_update_tags(),
                          is_super_admin=is_super,
                          admin_users=admin_users,
-                         tag_history=tag_history)
+                         tag_history=tag_history,
+                         icons=icons)
 
 @app.route('/admin/update_api_key', methods=['POST'])
 @admin_required
@@ -400,6 +465,54 @@ def get_player_history(tag):
     except Exception as e:
         print(f"Erreur lors de la récupération de l'historique: {e}")
         return jsonify([])
+
+@app.route('/admin/upload_icon', methods=['POST'])
+@admin_required
+def upload_icon():
+    category = request.form.get('category')
+    file = request.files.get('file')
+    
+    if not category or not file:
+        return jsonify({'success': False, 'error': 'Catégorie et fichier requis'}), 400
+    
+    try:
+        # Créer le dossier static/img s'il n'existe pas
+        upload_folder = os.path.join('static', 'img')
+        os.makedirs(upload_folder, exist_ok=True)
+        
+        # Vérifier que le fichier est une image
+        if not file.content_type.startswith('image/'):
+            return jsonify({'success': False, 'error': 'Le fichier doit être une image'}), 400
+        
+        # Sauvegarder le fichier
+        filename = f"{category}.png"
+        filepath = os.path.join(upload_folder, filename)
+        file.save(filepath)
+        
+        # Mettre à jour la configuration des icônes
+        icons = load_icons()
+        icons[category] = f"/static/img/{filename}"
+        save_icons(icons)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Icône mise à jour avec succès',
+            'path': f"/static/img/{filename}"
+        })
+        
+    except Exception as e:
+        print(f"Erreur lors de la mise à jour de l'icône: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/admin/reset_icons', methods=['POST'])
+@admin_required
+def reset_icons():
+    save_icons(DEFAULT_ICONS)
+    return jsonify({'success': True, 'message': 'Icônes réinitialisées avec succès'})
+
+@app.route('/get_icons')
+def get_icons():
+    return jsonify(load_icons())
 
 if __name__ == '__main__':
     app.run(debug=True) 

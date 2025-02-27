@@ -103,8 +103,8 @@
         }
 
         .profile-icon {
-            width: 80px;
-            height: 80px;
+            width: 120px;
+            height: 120px;
             border-radius: 8px;
             background: #1A1B2E;
             display: flex;
@@ -116,9 +116,9 @@
         }
 
         .profile-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+            width: 200%;
+            height: 200%;
+            object-fit: cover;
             display: block;
         }
 
@@ -250,156 +250,116 @@
             box-shadow: 0 0 15px var(--uib-color);
         }
 
-        .cube:nth-child(2) {
-            animation-delay: calc(var(--uib-speed) * -0.36);
+        .cube:nth-child(1) {
+            animation-delay: calc(var(--uib-speed) * -0.45);
         }
 
-        .cube:nth-child(2) .cube__inner {
-            animation-delay: calc(var(--uib-speed) * -0.36);
+        .cube:nth-child(2) {
+            animation-delay: calc(var(--uib-speed) * -0.3);
         }
 
         .cube:nth-child(3) {
-            animation-delay: calc(var(--uib-speed) * -0.2);
-        }
-
-        .cube:nth-child(3) .cube__inner {
-            animation-delay: calc(var(--uib-speed) * -0.2);
+            animation-delay: calc(var(--uib-speed) * -0.15);
         }
 
         @keyframes jump {
-            0% {
-                transform: translateY(0px);
+            0%, 100% {
+                transform: translateY(0);
             }
-
-            30% {
-                transform: translateY(0px);
-                animation-timing-function: ease-out;
-            }
-
             50% {
                 transform: translateY(-200%);
-                animation-timing-function: ease-in;
-            }
-
-            75% {
-                transform: translateY(0px);
-                animation-timing-function: ease-in;
             }
         }
 
         @keyframes morph {
-            0% {
+            0%, 100% {
                 transform: scaleY(1);
             }
-
-            10% {
-                transform: scaleY(1);
-            }
-
-            20%,
-            25% {
-                transform: scaleY(0.6) scaleX(1.3);
-                animation-timing-function: ease-in-out;
-            }
-
-            30% {
-                transform: scaleY(1.15) scaleX(0.9);
-                animation-timing-function: ease-in-out;
-            }
-
-            40% {
-                transform: scaleY(1);
-            }
-
-            70%,
-            85%,
-            100% {
-                transform: scaleY(1);
-            }
-
-            75% {
-                transform: scaleY(0.8) scaleX(1.2);
+            50% {
+                transform: scaleY(2);
             }
         }
 
         .loading-text {
+            color: #F54E42;
             font-family: 'Lilita One', cursive;
-            color: #F54E42;
+            font-size: 1.2rem;
+            margin-top: 20px;
             text-align: center;
-            margin-top: 10px;
-            font-size: 1.4rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            animation: textGlow 2s infinite;
-        }
-
-        @keyframes textGlow {
-            0%, 100% { text-shadow: 0 0 5px #F54E42; }
-            50% { text-shadow: 0 0 20px #F54E42; }
-        }
-
-        /* Style de la notification d'erreur */
-        .notification {
-            position: fixed;
-            right: -400px;
-            top: 20px;
-            width: 350px;
-            background: #32344D;
-            border-left: 4px solid #F54E42;
-            border-radius: 8px;
-            padding: 15px 20px;
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            transition: right 0.4s ease-in-out;
-            z-index: 1000;
-        }
-
-        .notification.show {
-            right: 20px;
-        }
-
-        .notification-content {
-            color: #ffffff;
-            flex-grow: 1;
-            margin-right: 15px;
-        }
-
-        .notification-close {
-            background: none;
-            border: none;
-            color: #F54E42;
-            font-size: 20px;
-            cursor: pointer;
-            padding: 0;
-            line-height: 1;
-        }
-
-        .notification-close:hover {
-            color: #ff6b61;
         }
 
         .chart-container {
             display: none;
-            margin: 10px 0;
-            padding: 15px;
-            background: rgba(26, 27, 46, 0.3);
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(26, 27, 46, 0.5);
             border-radius: 8px;
-            height: 300px;
+            height: 400px;
         }
 
         .chart-title {
             font-family: 'Lilita One', cursive;
             color: #FFD700;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             margin-bottom: 5px;
         }
 
         .chart-subtitle {
             color: #8888A0;
             font-size: 0.9rem;
-            margin-bottom: 10px;
-            font-family: 'Lilita One', cursive;
+            margin-bottom: 20px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #32344D;
+            border: 2px solid #F54E42;
+            border-radius: 8px;
+            padding: 15px;
+            display: none;
+            z-index: 1000;
+            max-width: 400px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .notification.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .notification-content {
+            color: #ffffff;
+            margin-right: 30px;
+        }
+
+        .notification-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #8888A0;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .notification-close:hover {
+            color: #ffffff;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         .stats-value {
@@ -459,7 +419,13 @@
         .progress-bar {
             height: 100%;
             background: #FFD700;
-            transition: width 0.3s ease;
+            transition: width 1s ease;
+            animation: fill 1s forwards;
+        }
+
+        @keyframes fill {
+            from { width: 0%; }
+            to { width: var(--progress); }
         }
 
         .brawlers-container {
@@ -478,9 +444,11 @@
         .brawler-card {
             background: #32344D;
             border-radius: 8px;
-            padding: 10px;
-            display: flex;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: 50px 1fr auto;
             align-items: center;
+            gap: 15px;
             position: relative;
             border: 2px solid transparent;
             transition: all 0.3s ease;
@@ -495,7 +463,6 @@
         .brawler-icon {
             width: 50px;
             height: 50px;
-            margin: 0 15px 0 0;
             border-radius: 8px;
             overflow: hidden;
             flex-shrink: 0;
@@ -503,9 +470,14 @@
 
         .brawler-info {
             display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .brawler-header {
+            display: flex;
             align-items: center;
-            justify-content: space-between;
-            flex-grow: 1;
+            gap: 15px;
         }
 
         .brawler-name {
@@ -515,23 +487,48 @@
             font-size: 1.2em;
         }
 
+        .brawler-progress-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .brawler-progress {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 107, 107, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .brawler-progress-bar {
+            height: 100%;
+            background: #FFD700;
+            transition: width 0.3s ease;
+        }
+
+        .brawler-power-text {
+            color: #8888A0;
+            font-size: 0.9em;
+            white-space: nowrap;
+        }
+
         .brawler-stats {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
 
-        .brawler-power {
-            color: #FF6B6B;
-            font-weight: bold;
-            margin-bottom: 10px;
+        .brawler-trophies {
+            color: #FFD700;
+            font-family: 'Lilita One', cursive;
+            font-size: 1.1em;
         }
 
         .brawler-items {
             display: flex;
-            justify-content: center;
             gap: 8px;
-            margin-top: 10px;
         }
 
         .brawler-item {
@@ -553,19 +550,195 @@
             background: rgba(255, 215, 0, 0.8);
         }
 
-        .brawler-progress {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: rgba(255, 107, 107, 0.2);
+        /* Styles améliorés pour les zones de drag and drop */
+        .icon-dropzone {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            padding: 4px;
+            transition: all 0.3s ease;
+            position: relative;
+            background: rgba(26, 27, 46, 0.3);
+            margin-right: 8px;
         }
 
-        .brawler-progress-bar {
+        .admin .icon-dropzone {
+            border: 2px dashed rgba(245, 78, 66, 0.3);
+            cursor: pointer;
+        }
+
+        .admin .icon-dropzone:hover {
+            border-color: #FFD700;
+            background: rgba(26, 27, 46, 0.5);
+        }
+
+        .admin .icon-dropzone.dragover {
+            border-color: #FFD700;
+            background: rgba(255, 215, 0, 0.1);
+            transform: scale(1.05);
+        }
+
+        .icon-dropzone img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            transition: all 0.3s ease;
+        }
+
+        .icon-dropzone:hover img {
+            transform: scale(1.1);
+        }
+
+        .icon-dropzone input[type="file"] {
+            position: absolute;
+            width: 100%;
             height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Style spécial pour l'icône du joueur */
+        .profile-icon .icon-dropzone {
+            width: 210px;
+            height: 210px;
+            padding: 0px;
+            margin: 0;
+        }
+
+        .profile-icon .icon-dropzone img {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Animation lors du drag and drop */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .icon-dropzone.dragover {
+            animation: pulse 1s infinite;
+        }
+
+        /* Styles pour le panneau admin de gestion des icônes */
+        .admin-icons-panel {
+            background: #32344D;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid #F54E42;
+        }
+
+        .admin-icons-panel h2 {
+            color: #FFD700;
+            font-family: 'Lilita One', cursive;
+            margin-bottom: 20px;
+        }
+
+        .admin-icons-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .admin-icon-item {
+            display: grid;
+            grid-template-columns: 150px 200px 1fr auto;
+            align-items: center;
+            gap: 20px;
+            padding: 15px;
+            background: rgba(26, 27, 46, 0.5);
+            border-radius: 8px;
+            border: 1px solid rgba(245, 78, 66, 0.3);
+        }
+
+        .admin-icon-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 8px;
+            background: #1A1B2E;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed rgba(245, 78, 66, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-icon-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            padding: 10px;
+        }
+
+        .admin-icon-preview.dragover {
+            border-color: #FFD700;
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .admin-icon-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .admin-icon-category {
+            color: #FFD700;
+            font-family: 'Lilita One', cursive;
+            font-size: 1.2em;
+        }
+
+        .admin-icon-path {
+            color: #8888A0;
+            font-size: 0.9em;
+            word-break: break-all;
+        }
+
+        .admin-icon-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .admin-icon-actions button {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: none;
+            background: #F54E42;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .admin-icon-actions button:hover {
             background: #FFD700;
-            transition: width 0.3s ease;
+            transform: translateY(-2px);
+        }
+
+        .admin-icon-upload {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .admin-icon-preview::after {
+            content: '📁 Glisser ou cliquer pour uploader';
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8em;
+            color: #8888A0;
+            text-align: center;
+            width: 100%;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -573,9 +746,14 @@
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1>BrawlStats</h1>
-            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
-                <i class="fas fa-lock"></i> Administration
-            </button>
+            <div>
+                <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#historyModal">
+                    <i class="fas fa-history"></i> Historique
+                </button>
+                <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
+                    <i class="fas fa-lock"></i> Administration
+                </button>
+            </div>
         </div>
         
         <div class="card">
@@ -597,7 +775,12 @@
             <div class="card-body">
                 <div class="profile-header">
                     <div class="profile-icon">
-                        <img id="playerIcon" src="" alt="Icône du joueur">
+                        <div class="icon-dropzone" ondrop="handleDrop(event, 'player')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                            <form enctype="multipart/form-data">
+                                <img id="playerIcon" src="" alt="Icône du joueur" onerror="this.src='/static/img/error.png'">
+                                <input type="file" accept="image/*" onchange="handleFileSelect(event, 'player')" />
+                            </form>
+                        </div>
                     </div>
                     <div class="profile-info">
                         <h3 id="playerName" class="player-name"></h3>
@@ -606,47 +789,80 @@
                 </div>
                 <div class="card-text">
                     <div class="stats-row clickable" onclick="toggleChart('combined')">
-                        <strong>Trophées:</strong>
+                        <strong>
+                            <div class="icon-dropzone" ondrop="handleDrop(event, 'trophies')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                                <form enctype="multipart/form-data">
+                                    <img id="trophiesIcon" src="/static/img/trophies.png" alt="Trophées" style="width: 24px; height: 24px; margin-right: 8px;" onerror="this.src='/static/img/error.png'">
+                                    <input type="file" accept="image/*" onchange="handleFileSelect(event, 'trophies')" />
+                                </form>
+                            </div>
+                            Trophées:
+                        </strong>
                         <div class="stats-value">
                             <span id="trophies"></span>
-                            <span id="trophies-trend" class="stats-trend"></span>
+                            <span id="trophies-max" class="stats-trend"></span>
                         </div>
                     </div>
 
                     <div id="combined-chart" class="chart-container">
                         <div class="chart-title">Progression des trophées</div>
-                        <div class="chart-subtitle">Évolution des trophées actuels et maximum au fil du temps</div>
+                        <div class="chart-subtitle">Évolution des trophées au fil du temps</div>
                         <canvas id="combinedCanvas"></canvas>
                     </div>
 
                     <div class="stats-row">
-                        <strong>Niveau:</strong>
+                        <strong>
+                            <div class="icon-dropzone" ondrop="handleDrop(event, 'level')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                                <img id="levelIcon" src="/static/img/level.png" alt="Niveau" style="width: 24px; height: 24px; margin-right: 8px;" onerror="this.src='/static/img/error.png'">
+                                <input type="file" accept="image/*" onchange="handleFileSelect(event, 'level')" />
+                            </div>
+                            Niveau:
+                        </strong>
                         <span id="level"></span>
                     </div>
 
                     <div class="stats-row">
-                        <strong>Trophées maximum:</strong>
-                        <span id="highestTrophies"></span>
-                    </div>
-
-                    <div class="stats-row">
-                        <strong>Victoires 3v3:</strong>
+                        <strong>
+                            <div class="icon-dropzone" ondrop="handleDrop(event, '3vs3')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                                <img id="3vs3Icon" src="/static/img/3vs3.png" alt="Victoires 3v3" style="width: 24px; height: 24px; margin-right: 8px;" onerror="this.src='/static/img/error.png'">
+                                <input type="file" accept="image/*" onchange="handleFileSelect(event, '3vs3')" />
+                            </div>
+                            Victoires 3v3:
+                        </strong>
                         <span id="3vs3-victories"></span>
                     </div>
 
                     <div class="stats-row">
-                        <strong>Victoires Solo:</strong>
+                        <strong>
+                            <div class="icon-dropzone" ondrop="handleDrop(event, 'solo')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                                <img id="soloIcon" src="/static/img/solo.png" alt="Victoires Solo" style="width: 24px; height: 24px; margin-right: 8px;" onerror="this.src='/static/img/error.png'">
+                                <input type="file" accept="image/*" onchange="handleFileSelect(event, 'solo')" />
+                            </div>
+                            Victoires Solo:
+                        </strong>
                         <span id="solo-victories"></span>
                     </div>
 
                     <div class="stats-row">
-                        <strong>Victoires Duo:</strong>
+                        <strong>
+                            <div class="icon-dropzone" ondrop="handleDrop(event, 'duo')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                                <img id="duoIcon" src="/static/img/duo.png" alt="Victoires Duo" style="width: 24px; height: 24px; margin-right: 8px;" onerror="this.src='/static/img/error.png'">
+                                <input type="file" accept="image/*" onchange="handleFileSelect(event, 'duo')" />
+                            </div>
+                            Victoires Duo:
+                        </strong>
                         <span id="duo-victories"></span>
                     </div>
 
                     <!-- Club Info -->
                     <div class="stats-row">
-                        <strong>Club:</strong>
+                        <strong>
+                            <div class="icon-dropzone" ondrop="handleDrop(event, 'club')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                                <img id="clubIcon" src="/static/img/club.png" alt="Club" style="width: 24px; height: 24px; margin-right: 8px;" onerror="this.src='/static/img/error.png'">
+                                <input type="file" accept="image/*" onchange="handleFileSelect(event, 'club')" />
+                            </div>
+                            Club:
+                        </strong>
                         <div class="club-info">
                             <span id="clubName"></span>
                             <span id="clubRole" class="club-role"></span>
@@ -655,7 +871,13 @@
 
                     <!-- Brawlers Progress -->
                     <div class="stats-row" onclick="toggleBrawlers()">
-                        <strong>Progression des Brawlers:</strong>
+                        <strong>
+                            <div class="icon-dropzone" ondrop="handleDrop(event, 'brawlers')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                                <img id="brawlersIcon" src="/static/img/brawlers.png" alt="Progression des Brawlers" style="width: 24px; height: 24px; margin-right: 8px;" onerror="this.src='/static/img/error.png'">
+                                <input type="file" accept="image/*" onchange="handleFileSelect(event, 'brawlers')" />
+                            </div>
+                            Progression des Brawlers:
+                        </strong>
                         <div class="brawler-progress">
                             <div class="progress">
                                 <div id="brawlerProgressBar" class="progress-bar" role="progressbar"></div>
@@ -713,6 +935,23 @@
         </div>
     </div>
 
+    <!-- Modal d'historique -->
+    <div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="historyModalLabel">Historique des recherches</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="searchHistory" class="list-group">
+                        <!-- L'historique sera inséré ici dynamiquement -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Ajout de Font Awesome et Bootstrap JS -->
     <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -727,6 +966,67 @@
 
         let currentChart = null;
         let currentChartType = null;
+        let icons = {};
+
+        // Charger les icônes au démarrage
+        async function loadIcons() {
+            try {
+                const response = await fetch('/get_icons');
+                icons = await response.json();
+                // Mettre à jour toutes les icônes après le chargement
+                updateAllIcons();
+            } catch (error) {
+                console.error('Erreur lors du chargement des icônes:', error);
+            }
+        }
+
+        // Fonction pour mettre à jour toutes les icônes
+        function updateAllIcons() {
+            // Mettre à jour l'icône des trophées
+            const trophiesIcons = document.querySelectorAll('[id$="trophiesIcon"]');
+            trophiesIcons.forEach(icon => {
+                icon.src = icons.trophies || '/static/img/error.png';
+            });
+
+            // Mettre à jour l'icône du niveau
+            const levelIcon = document.getElementById('levelIcon');
+            if (levelIcon) {
+                levelIcon.src = icons.level || '/static/img/error.png';
+            }
+
+            // Mettre à jour l'icône 3vs3
+            const threevsthreeIcon = document.getElementById('3vs3Icon');
+            if (threevsthreeIcon) {
+                threevsthreeIcon.src = icons['3vs3'] || '/static/img/error.png';
+            }
+
+            // Mettre à jour l'icône solo
+            const soloIcon = document.getElementById('soloIcon');
+            if (soloIcon) {
+                soloIcon.src = icons.solo || '/static/img/error.png';
+            }
+
+            // Mettre à jour l'icône duo
+            const duoIcon = document.getElementById('duoIcon');
+            if (duoIcon) {
+                duoIcon.src = icons.duo || '/static/img/error.png';
+            }
+
+            // Mettre à jour l'icône du club
+            const clubIcon = document.getElementById('clubIcon');
+            if (clubIcon) {
+                clubIcon.src = icons.club || '/static/img/error.png';
+            }
+
+            // Mettre à jour l'icône des brawlers
+            const brawlersIcon = document.getElementById('brawlersIcon');
+            if (brawlersIcon) {
+                brawlersIcon.src = icons.brawlers || '/static/img/error.png';
+            }
+        }
+
+        // Recharger les icônes périodiquement
+        setInterval(loadIcons, 30000); // Recharger toutes les 30 secondes
 
         function toggleChart(type) {
             const chartContainer = document.getElementById(`${type}-chart`);
@@ -758,108 +1058,59 @@
         }
 
         function createChart(type) {
-            const ctx = document.getElementById(`${type}Canvas`).getContext('2d');
-            
-            // Utiliser les données réelles de l'historique
-            const history = window.playerHistory || [];
-            const dates = history.map(entry => entry.date);
-            const trophiesValues = history.map(entry => entry.trophies);
-            const highestTrophiesValues = history.map(entry => entry.highestTrophies);
+            const ctx = document.getElementById('combinedCanvas').getContext('2d');
+            const data = window.playerHistory;
+
+            if (!data || data.length === 0) {
+                return;
+            }
+
+            const dates = data.map(entry => new Date(entry.timestamp * 1000).toLocaleDateString());
+            const trophies = data.map(entry => entry.trophies);
 
             currentChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: dates,
-                    datasets: [{
-                        label: 'Trophées actuels',
-                        data: trophiesValues,
-                        borderColor: '#FFD700',
-                        backgroundColor: 'rgba(255, 215, 0, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        pointRadius: 5,
-                        pointHoverRadius: 8
-                    },
-                    {
-                        label: 'Trophées maximum',
-                        data: highestTrophiesValues,
-                        borderColor: '#F54E42',
-                        backgroundColor: 'rgba(245, 78, 66, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        pointRadius: 5,
-                        pointHoverRadius: 8
-                    }]
+                    datasets: [
+                        {
+                            label: 'Trophées',
+                            data: trophies,
+                            borderColor: '#FFD700',
+                            backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    layout: {
-                        padding: {
-                            bottom: 60,
-                            left: 15,
-                            right: 15,
-                            top: 10
-                        }
-                    },
                     plugins: {
                         legend: {
                             display: true,
                             position: 'top',
                             labels: {
-                                font: {
-                                    family: 'Lilita One',
-                                    size: 12
-                                },
-                                color: '#8888A0'
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: '#32344D',
-                            titleFont: {
-                                family: 'Lilita One'
-                            },
-                            bodyFont: {
-                                family: 'Arial'
-                            },
-                            callbacks: {
-                                label: function(context) {
-                                    return `${context.dataset.label}: ${context.parsed.y} trophées`;
-                                }
+                                color: '#E4E4E4'
                             }
                         }
                     },
                     scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#E4E4E4'
+                            }
+                        },
                         y: {
                             grid: {
                                 color: 'rgba(255, 255, 255, 0.1)'
                             },
                             ticks: {
-                                color: '#8888A0',
-                                font: {
-                                    family: 'Lilita One'
-                                },
-                                callback: function(value) {
-                                    return Math.round(value);
-                                }
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            },
-                            ticks: {
-                                color: '#8888A0',
-                                maxRotation: 30,
-                                minRotation: 30,
-                                font: {
-                                    family: 'Lilita One',
-                                    size: 11
-                                },
-                                autoSkip: true,
-                                maxTicksLimit: 6,
-                                padding: 10,
-                                offset: true
+                                color: '#E4E4E4'
                             }
                         }
                     }
@@ -867,167 +1118,42 @@
             });
         }
 
-        document.getElementById('searchForm').addEventListener('submit', async (e) => {
+        document.getElementById('searchForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            let playerTag = document.getElementById('playerTag').value.trim();
-            // Ajouter le # si ce n'est pas déjà fait
-            if (!playerTag.startsWith('#')) {
-                playerTag = '#' + playerTag;
-            }
-            
+            const playerTag = document.getElementById('playerTag').value;
             const playerInfo = document.getElementById('playerInfo');
             const loaderContainer = document.getElementById('loaderContainer');
             const errorMessage = document.getElementById('errorMessage');
-            
+
             // Cacher les résultats précédents et afficher le loader
             playerInfo.classList.add('hidden');
-            errorMessage.classList.remove('show');
             loaderContainer.style.display = 'flex';
-            
+            errorMessage.classList.remove('show');
+
             try {
+                const formData = new FormData();
+                formData.append('player_tag', playerTag);
+
                 const response = await fetch('/search_player', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `player_tag=${encodeURIComponent(playerTag.substring(1))}`  // On enlève le # pour l'API
+                    body: formData
                 });
-                
+
                 const data = await response.json();
                 
-                // Cacher le loader
-                loaderContainer.style.display = 'none';
-                
-                if (response.ok) {
-                    // Mise à jour des informations de base du joueur
-                    document.getElementById('playerName').textContent = data.name;
-                    document.getElementById('tag').textContent = '#' + data.tag.replace('#', '');
-                    document.getElementById('trophies').textContent = data.trophies;
-                    document.getElementById('highestTrophies').textContent = data.highestTrophies || data.trophies;
-                    document.getElementById('level').textContent = data.expLevel;
-                    
-                    // Charger l'historique des trophées
-                    const cleanTag = data.tag.replace('#', '');
-                    const historyResponse = await fetch(`/player_history/${cleanTag}`);
-                    const historyData = await historyResponse.json();
-                    
-                    // Mettre à jour l'historique avec les données actuelles si nécessaire
-                    const today = new Date().toLocaleDateString();
-                    const lastEntry = historyData[historyData.length - 1];
-                    
-                    if (!lastEntry || lastEntry.date !== today) {
-                        historyData.push({
-                            date: today,
-                            trophies: data.trophies,
-                            highestTrophies: data.highestTrophies || data.trophies
-                        });
-                    } else {
-                        lastEntry.trophies = data.trophies;
-                        lastEntry.highestTrophies = data.highestTrophies || data.trophies;
-                    }
-                    
-                    window.playerHistory = historyData;
-                    
-                    // Afficher le graphique
-                    toggleChart('combined');
-                    
-                    // Mise à jour des victoires
-                    document.getElementById('3vs3-victories').textContent = data['3vs3Victories'];
-                    document.getElementById('solo-victories').textContent = data.soloVictories;
-                    document.getElementById('duo-victories').textContent = data.duoVictories;
-                    
-                    // Mise à jour de l'icône du joueur
-                    const playerIcon = document.getElementById('playerIcon');
-                    playerIcon.src = `https://media.brawltime.ninja/avatars/${data.icon.id}.png`;
-                    playerIcon.onerror = () => {
-                        playerIcon.src = "https://media.brawltime.ninja/avatars/28000000.png";
-                    };
-                    
-                    // Mise à jour des informations du club
-                    const clubName = document.getElementById('clubName');
-                    const clubRole = document.getElementById('clubRole');
-                    if (data.club && data.club.name) {
-                        clubName.textContent = data.club.name;
-                        clubRole.textContent = data.club.role || 'Membre';
-                        clubRole.style.display = 'inline';
-                    } else {
-                        clubName.textContent = 'Aucun club';
-                        clubRole.style.display = 'none';
-                    }
-
-                    // Mise à jour de la progression des brawlers
-                    const progressBar = document.getElementById('brawlerProgressBar');
-                    const progressText = document.getElementById('brawlerProgressText');
-                    const maxPowerBrawlers = data.brawlers.filter(b => b.power === 11).length;
-                    const totalBrawlers = data.brawlers.length;
-                    const percentage = Math.round((maxPowerBrawlers / totalBrawlers) * 100);
-                    
-                    progressBar.style.width = `${percentage}%`;
-                    progressText.textContent = `${maxPowerBrawlers}/${totalBrawlers} (${percentage}%)`;
-
-                    // Mise à jour de la liste des brawlers
-                    const brawlersGrid = document.getElementById('brawlersGrid');
-                    brawlersGrid.innerHTML = '';
-
-                    data.brawlers.sort((a, b) => b.trophies - a.trophies).forEach(brawler => {
-                        const card = document.createElement('div');
-                        card.className = 'brawler-card';
-                        card.innerHTML = `
-                            <div class="brawler-icon">
-                                <img src="https://media.brawltime.ninja/brawlers/${brawler.id}.png" 
-                                     alt="${brawler.name}"
-                                     onerror="this.src='https://media.brawltime.ninja/brawlers/16000000.png'">
-                            </div>
-                            <div class="brawler-info">
-                                <div class="brawler-name">${brawler.name}</div>
-                                <div class="brawler-stats">
-                                    <div class="brawler-power">Niveau ${brawler.power}</div>
-                                    <div class="brawler-trophies">🏆 ${brawler.trophies}</div>
-                                    <div class="brawler-items">
-                                        ${brawler.gadgets.map(g => `
-                                            <div class="brawler-item active">
-                                                <img src="https://media.brawltime.ninja/gadgets/${g.id}.png" 
-                                                     alt="${g.name}"
-                                                     title="${g.name}">
-                                            </div>
-                                        `).join('')}
-                                        ${brawler.starPowers.map(sp => `
-                                            <div class="brawler-item active">
-                                                <img src="https://media.brawltime.ninja/star-powers/${sp.id}.png" 
-                                                     alt="${sp.name}"
-                                                     title="${sp.name}">
-                                            </div>
-                                        `).join('')}
-                                        ${brawler.gears.map(gear => `
-                                            <div class="brawler-item active">
-                                                <img src="https://media.brawltime.ninja/gears/${gear.id}.png" 
-                                                     alt="${gear.name}"
-                                                     title="${gear.name}">
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="brawler-progress">
-                                <div class="brawler-progress-bar" style="width: ${(brawler.power / 11) * 100}%"></div>
-                            </div>
-                        `;
-                        brawlersGrid.appendChild(card);
-                    });
-                    
-                    playerInfo.classList.remove('hidden');
-                } else {
+                if (data.error) {
                     const errorContent = document.querySelector('#errorMessage .notification-content');
-                    errorContent.textContent = "Une erreur s'est produite lors de la recherche du joueur.";
+                    errorContent.textContent = data.error;
                     errorMessage.classList.add('show');
+                    loaderContainer.style.display = 'none';
+                } else {
+                    await updatePlayerStats(data);
                 }
             } catch (error) {
                 console.error('Erreur:', error);
-                // Cacher le loader en cas d'erreur
                 loaderContainer.style.display = 'none';
                 const errorContent = document.querySelector('#errorMessage .notification-content');
-                errorContent.textContent = "Une erreur s'est produite lors de la recherche du joueur.";
+                errorContent.textContent = "Une erreur de connexion s'est produite. Veuillez vérifier votre connexion internet et réessayer.";
                 errorMessage.classList.add('show');
             }
         });
@@ -1063,6 +1189,361 @@
             const brawlersList = document.getElementById('brawlersList');
             brawlersList.style.display = brawlersList.style.display === 'none' ? 'block' : 'none';
         }
+
+        // Fonctions pour le drag & drop des icônes
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(event) {
+            event.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(event, category) {
+            // Vérifier si l'utilisateur est admin
+            const isAdmin = document.body.classList.contains('admin');
+            if (!isAdmin) {
+                event.preventDefault();
+                showNotification('Vous devez être administrateur pour modifier les icônes', 'error');
+                return;
+            }
+
+            event.preventDefault();
+            event.currentTarget.classList.remove('dragover');
+            
+            const file = event.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                uploadImage(file, category);
+            }
+        }
+
+        function handleFileSelect(event, category) {
+            // Vérifier si l'utilisateur est admin
+            const isAdmin = document.body.classList.contains('admin');
+            if (!isAdmin) {
+                event.preventDefault();
+                showNotification('Vous devez être administrateur pour modifier les icônes', 'error');
+                return;
+            }
+
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                uploadImage(file, category);
+            }
+        }
+
+        async function uploadImage(file, category) {
+            // Vérifier si l'utilisateur est admin
+            const isAdmin = document.body.classList.contains('admin');
+            if (!isAdmin) {
+                showNotification('Vous devez être administrateur pour modifier les icônes', 'error');
+                return;
+            }
+
+            // Vérifier que le fichier est une image
+            if (!file.type.startsWith('image/')) {
+                showNotification('Le fichier doit être une image', 'error');
+                return;
+            }
+
+            // Vérifier que la catégorie est définie
+            if (!category) {
+                showNotification('La catégorie est requise', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('category', category);
+
+            try {
+                console.log('Envoi du fichier:', {
+                    nom: file.name,
+                    taille: file.size,
+                    type: file.type,
+                    categorie: category
+                });
+
+                const response = await fetch('/admin/upload_icon', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `Erreur HTTP: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Réponse du serveur:', data);
+                
+                if (data.success) {
+                    // Recharger les icônes après la mise à jour
+                    await loadIcons();
+                    showNotification('Icône mise à jour avec succès', 'success');
+                } else {
+                    showNotification(data.error || 'Erreur lors de la mise à jour de l\'icône', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur lors de l\'upload:', error);
+                showNotification(error.message || 'Erreur lors de la mise à jour de l\'icône', 'error');
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        async function updatePlayerStats(data) {
+            try {
+                // Vérifier que data est un objet valide
+                if (!data || typeof data !== 'object') {
+                    throw new Error('Les données du joueur sont invalides');
+                }
+
+                // Vérifier les propriétés requises
+                const requiredProps = ['tag', 'name', 'trophies', 'expLevel', '3vs3Victories', 'soloVictories', 'duoVictories', 'brawlers'];
+                for (const prop of requiredProps) {
+                    if (!(prop in data)) {
+                        throw new Error(`Propriété manquante: ${prop}`);
+                    }
+                }
+
+                // Charger l'historique des trophées
+                const cleanTag = data.tag.replace('#', '');
+                const historyResponse = await fetch(`/player_history/${cleanTag}`);
+                if (!historyResponse.ok) {
+                    throw new Error('Erreur lors du chargement de l\'historique');
+                }
+                const historyData = await historyResponse.json();
+                
+                // Initialiser l'historique
+                window.playerHistory = Array.isArray(historyData) ? historyData : [];
+                
+                // Mettre à jour l'historique avec les données actuelles
+                const now = Math.floor(Date.now() / 1000);
+                const today = new Date().toLocaleDateString();
+                
+                const lastEntry = window.playerHistory[window.playerHistory.length - 1];
+                if (!lastEntry || lastEntry.date !== today) {
+                    window.playerHistory.push({
+                        timestamp: now,
+                        date: today,
+                        trophies: data.trophies
+                    });
+                } else {
+                    lastEntry.timestamp = now;
+                    lastEntry.trophies = data.trophies;
+                }
+                
+                // Afficher le graphique
+                toggleChart('combined');
+
+                // Mise à jour des statistiques du joueur
+                document.getElementById('playerName').textContent = data.name || 'N/A';
+                document.getElementById('tag').textContent = data.tag || 'N/A';
+                document.getElementById('trophies').textContent = data.trophies || '0';
+                document.getElementById('level').textContent = data.expLevel || '0';
+                document.getElementById('3vs3-victories').textContent = data['3vs3Victories'] || '0';
+                document.getElementById('solo-victories').textContent = data.soloVictories || '0';
+                document.getElementById('duo-victories').textContent = data.duoVictories || '0';
+
+                // Mise à jour de l'icône du joueur
+                const playerIconContainer = document.querySelector('.profile-icon');
+                if (playerIconContainer) {
+                    playerIconContainer.innerHTML = `
+                        <div class="icon-dropzone" ondrop="handleDrop(event, 'player')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                            <form enctype="multipart/form-data">
+                                <img id="playerIcon" src="https://media.brawltime.ninja/avatars/${data.icon?.id || 'default'}.png" 
+                                     alt="Icône du joueur" 
+                                     onerror="this.src='/static/img/error.png'">
+                                <input type="file" accept="image/*" onchange="handleFileSelect(event, 'player')" />
+                            </form>
+                        </div>
+                    `;
+                }
+
+                // Mise à jour des informations du club
+                const clubName = document.getElementById('clubName');
+                const clubRole = document.getElementById('clubRole');
+                if (clubName && clubRole) {
+                    if (data.club && data.club.name) {
+                        clubName.textContent = data.club.name;
+                        clubRole.textContent = data.club.role || 'Membre';
+                        clubRole.style.display = 'inline';
+                    } else {
+                        clubName.textContent = 'Aucun club';
+                        clubRole.style.display = 'none';
+                    }
+                }
+
+                // Mise à jour de la progression des brawlers
+                if (Array.isArray(data.brawlers)) {
+                    const progressBar = document.getElementById('brawlerProgressBar');
+                    const progressText = document.getElementById('brawlerProgressText');
+                    const maxPowerBrawlers = data.brawlers.filter(b => b.power === 11).length;
+                    const totalBrawlers = data.brawlers.length;
+                    const percentage = Math.round((maxPowerBrawlers / totalBrawlers) * 100);
+                    
+                    if (progressBar && progressText) {
+                        progressBar.style.width = `${percentage}%`;
+                        progressText.textContent = `${maxPowerBrawlers}/${totalBrawlers} (${percentage}%)`;
+                    }
+
+                    // Mise à jour de la liste des brawlers
+                    const brawlersGrid = document.getElementById('brawlersGrid');
+                    if (brawlersGrid) {
+                        brawlersGrid.innerHTML = '';
+                        data.brawlers
+                            .sort((a, b) => b.trophies - a.trophies)
+                            .forEach(brawler => {
+                                if (!brawler || typeof brawler !== 'object') return;
+                                
+                                const card = document.createElement('div');
+                                card.className = 'brawler-card';
+                                const powerPercentage = Math.round(((brawler.power || 0) / 11) * 100);
+                                card.innerHTML = `
+                                    <div class="brawler-icon">
+                                        <img src="https://media.brawltime.ninja/brawlers/${brawler.id || 'default'}.png" 
+                                             alt="${brawler.name || 'Brawler'}"
+                                             onerror="this.src='/static/img/error.png'">
+                                    </div>
+                                    <div class="brawler-info">
+                                        <div class="brawler-header">
+                                            <div class="brawler-name">${brawler.name || 'Brawler'}</div>
+                                            <div class="brawler-progress-container">
+                                                <div class="brawler-progress">
+                                                    <div class="brawler-progress-bar" style="width: ${powerPercentage}%"></div>
+                                                </div>
+                                                <div class="brawler-power-text">Niveau ${brawler.power || 0}</div>
+                                            </div>
+                                        </div>
+                                        <div class="brawler-items">
+                                            ${(brawler.gadgets || []).map(g => `
+                                            <div class="brawler-item active" title="${g.name || ''}">
+                                                <img src="https://media.brawltime.ninja/gadgets/${g.id || 'default'}.png" 
+                                                     alt="${g.name || 'Gadget'}"
+                                                     onerror="this.src='/static/img/error.png'">
+                                                </div>
+                                            `).join('')}
+                                            ${(brawler.starPowers || []).map(sp => `
+                                            <div class="brawler-item active" title="${sp.name || ''}">
+                                                <img src="https://media.brawltime.ninja/star-powers/${sp.id || 'default'}.png" 
+                                                     alt="${sp.name || 'Star Power'}"
+                                                     onerror="this.src='/static/img/error.png'">
+                                                </div>
+                                            `).join('')}
+                                            ${(brawler.gears || []).map(gear => `
+                                            <div class="brawler-item active" title="${gear.name || ''}">
+                                                <img src="https://media.brawltime.ninja/gears/${gear.id || 'default'}.png" 
+                                                     alt="${gear.name || 'Gear'}"
+                                                     onerror="this.src='/static/img/error.png'">
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                    <div class="brawler-trophies">🏆 ${brawler.trophies || 0}</div>
+                                `;
+                                brawlersGrid.appendChild(card);
+                            });
+                    }
+                }
+
+                // Afficher les informations du joueur et cacher le loader
+                document.getElementById('playerInfo').classList.remove('hidden');
+                document.getElementById('loaderContainer').style.display = 'none';
+                
+            } catch (error) {
+                console.error('Erreur lors de la mise à jour des statistiques:', error);
+                const errorContent = document.querySelector('#errorMessage .notification-content');
+                errorContent.textContent = error.message || "Une erreur s'est produite lors de la mise à jour des statistiques.";
+                document.getElementById('errorMessage').classList.add('show');
+                document.getElementById('loaderContainer').style.display = 'none';
+            }
+        }
+
+        // Gestion de l'historique des recherches
+        function addToHistory(tag) {
+            let history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+            // Éviter les doublons
+            if (!history.includes(tag)) {
+                history.unshift(tag);
+                // Garder seulement les 10 dernières recherches
+                if (history.length > 10) {
+                    history.pop();
+                }
+                localStorage.setItem('searchHistory', JSON.stringify(history));
+            }
+            updateHistoryDisplay();
+        }
+
+        function updateHistoryDisplay() {
+            const historyContainer = document.getElementById('searchHistory');
+            const history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+            
+            historyContainer.innerHTML = history.map(tag => `
+                <button class="list-group-item list-group-item-action bg-dark text-light" onclick="useHistoryTag('${tag}')" style="border-color: #F54E42;">
+                    ${tag}
+                </button>
+            `).join('');
+        }
+
+        function useHistoryTag(tag) {
+            document.getElementById('playerTag').value = tag;
+            document.getElementById('historyModal').querySelector('.btn-close').click();
+            
+            // Récupérer les données du joueur sans soumettre le formulaire
+            const formData = new FormData();
+            formData.append('player_tag', tag);
+            
+            const playerInfo = document.getElementById('playerInfo');
+            const loaderContainer = document.getElementById('loaderContainer');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Cacher les résultats précédents et afficher le loader
+            playerInfo.classList.add('hidden');
+            loaderContainer.style.display = 'flex';
+            errorMessage.classList.remove('show');
+
+            fetch('/search_player', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    const errorContent = document.querySelector('#errorMessage .notification-content');
+                    errorContent.textContent = data.error;
+                    errorMessage.classList.add('show');
+                    loaderContainer.style.display = 'none';
+                } else {
+                    updatePlayerStats(data);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                loaderContainer.style.display = 'none';
+                const errorContent = document.querySelector('#errorMessage .notification-content');
+                errorContent.textContent = "Une erreur de connexion s'est produite. Veuillez vérifier votre connexion internet et réessayer.";
+                errorMessage.classList.add('show');
+            });
+        }
+
+        // Mettre à jour l'historique lors de la recherche
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            const playerTag = document.getElementById('playerTag').value;
+            addToHistory(playerTag);
+        });
+
+        // Charger l'historique au chargement de la page
+        document.addEventListener('DOMContentLoaded', updateHistoryDisplay);
     </script>
 </body>
 </html> 

@@ -24,7 +24,7 @@
 
         h1, h2 {
             font-family: 'Lilita One', cursive;
-            color: #FF6B6B;
+            color: #F54E42;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
@@ -32,13 +32,13 @@
             margin-top: 20px;
             border-radius: 15px;
             background: #32344D;
-            border: 3px solid #FF6B6B;
+            border: 3px solid #F54E42;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
         }
 
         .form-control {
             background-color: #1A1B2E;
-            border: 2px solid #FF6B6B;
+            border: 2px solid #F54E42;
             color: #ffffff;
         }
 
@@ -46,7 +46,7 @@
             background-color: #1A1B2E;
             border-color: #FFD700;
             color: #ffffff;
-            box-shadow: 0 0 0 0.25rem rgba(255, 107, 107, 0.25);
+            box-shadow: 0 0 0 0.25rem rgba(245, 78, 66, 0.25);
         }
 
         .form-control::placeholder {
@@ -60,7 +60,7 @@
         }
 
         .btn-primary {
-            background-color: #FF6B6B;
+            background-color: #F54E42;
             border: none;
             color: #ffffff;
             font-weight: bold;
@@ -78,16 +78,16 @@
         }
 
         .btn-danger:hover {
-            background-color: #FF6B6B;
+            background-color: #F54E42;
         }
 
         .btn-outline-primary {
-            color: #FF6B6B;
-            border-color: #FF6B6B;
+            color: #F54E42;
+            border-color: #F54E42;
         }
 
         .btn-outline-primary:hover {
-            background-color: #FF6B6B;
+            background-color: #F54E42;
             color: #ffffff;
         }
 
@@ -99,7 +99,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            border: 1px solid rgba(255, 107, 107, 0.3);
+            border: 1px solid rgba(245, 78, 66, 0.3);
         }
 
         .tag-item-header {
@@ -267,6 +267,127 @@
         .notification-close:hover {
             color: #ffffff;
         }
+
+        .icon-dropzone {
+            border: 2px dashed #F54E42;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            background: #1A1B2E;
+            margin: 5px 0;
+        }
+
+        .icon-dropzone:hover {
+            border-color: #FFD700;
+            background: #252742;
+            transform: translateY(-2px);
+        }
+
+        .icon-dropzone.dragover {
+            background: rgba(245, 78, 66, 0.1);
+            border-color: #FFD700;
+            transform: scale(1.02);
+        }
+
+        .icon-dropzone input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .table-dark {
+            --bs-table-bg: #1A1B2E;
+            --bs-table-striped-bg: #252742;
+            --bs-table-hover-bg: #2B2D42;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .table-dark th {
+            background-color: #2B2D42;
+            border-bottom: 2px solid #F54E42;
+            padding: 15px;
+            font-weight: bold;
+        }
+
+        .table-dark td {
+            padding: 15px;
+            vertical-align: middle;
+            border-bottom: 1px solid rgba(245, 78, 66, 0.2);
+        }
+
+        /* Style pour la modal d'historique */
+        .history-modal .modal-content {
+            background: #32344D;
+            border: 2px solid #F54E42;
+        }
+
+        .history-modal .modal-header {
+            border-bottom: 1px solid #F54E42;
+        }
+
+        .history-modal .modal-title {
+            color: #FFD700;
+        }
+
+        .history-tag-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: #1A1B2E;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-tag-item:hover {
+            background: #252742;
+            transform: translateX(5px);
+        }
+
+        .history-tag-item .tag {
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        .history-tag-item .date {
+            color: #8888A0;
+            font-size: 0.9em;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: stretch;
+            width: 100%;
+        }
+
+        .input-group .form-control {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            flex: 1;
+        }
+
+        .input-group .btn {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            margin-left: -1px;
+            padding-left: 20px;
+            padding-right: 20px;
+            white-space: nowrap;
+        }
+
+        .input-group .form-control:focus + .btn {
+            border-left-color: #FFD700;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -307,7 +428,7 @@
                         <h2>Tags à actualiser</h2>
                         <form id="addTagForm" action="/admin/add_tag" method="POST" class="mb-4">
                             <div class="input-group">
-                                <input type="text" class="form-control" name="tag" placeholder="Entrez un tag joueur" required>
+                                <input type="text" class="form-control" name="tag" id="tagInput" placeholder="Entrez un tag joueur" required>
                                 <button type="submit" class="btn btn-primary">Ajouter</button>
                             </div>
                         </form>
@@ -395,47 +516,53 @@
             </div>
             {% endif %}
 
-            <!-- Historique des tags -->
-            <div class="col-12 mt-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h2>Historique des tags</h2>
-                        <div class="table-responsive">
-                            <table class="table table-dark">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Tag</th>
-                                        <th>Action</th>
-                                        <th>Administrateur</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for entry in tag_history|reverse %}
-                                    <tr>
-                                        <td>{{ entry.timestamp }}</td>
-                                        <td>{{ entry.tag }}</td>
-                                        <td>
-                                            {% if entry.action == 'ajout' %}
-                                            <span class="badge bg-success">Ajout</span>
-                                            {% elif entry.action == 'suppression' %}
-                                            <span class="badge bg-danger">Suppression</span>
-                                            {% else %}
-                                            <span class="badge bg-info">Actualisation</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>{{ entry.admin }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+            <!-- Section Gestion des Icônes -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h2>Gestion des Icônes</h2>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="color: #FFD700; font-size: 1.1em;">Catégorie</th>
+                                    <th style="color: #FFD700; font-size: 1.1em;">Icône actuelle</th>
+                                    <th style="color: #FFD700; font-size: 1.1em;">URL</th>
+                                    <th style="color: #FFD700; font-size: 1.1em;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for category, url in icons.items() %}
+                                <tr>
+                                    <td style="color: #E4E4E4; font-weight: bold;">{{ category }}</td>
+                                    <td>
+                                        <div class="icon-dropzone" id="dropzone-{{ category }}" ondrop="handleDrop(event, '{{ category }}')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                                            <img src="{{ url }}" alt="{{ category }}" style="width: 32px; height: 32px;" onerror="this.src='/static/img/error.png'">
+                                            <input type="file" accept="image/*" onchange="handleFileSelect(event, '{{ category }}')" />
+                                            <div class="mt-2" style="color: #FFD700; font-size: 0.9em;">Glissez une image ou cliquez pour choisir</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" value="{{ url }}" id="icon-url-{{ category }}">
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" onclick="updateIcon('{{ category }}')">
+                                            <i class="fas fa-sync-alt me-1"></i> Mettre à jour
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
+                    <button class="btn btn-warning mt-3" onclick="resetIcons()">
+                        <i class="fas fa-undo me-1"></i> Réinitialiser toutes les icônes
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Fonction pour formater le temps restant
@@ -638,6 +765,120 @@
                 }
             });
         });
+
+        async function updateIcon(category) {
+            const iconUrl = document.getElementById(`icon-url-${category}`).value;
+            
+            try {
+                const formData = new FormData();
+                formData.append('category', category);
+                formData.append('file', await fetch(iconUrl).then(r => r.blob()));
+
+                const response = await fetch('/admin/upload_icon', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Icône mise à jour avec succès');
+                    // Rafraîchir l'aperçu de l'icône
+                    const iconPreview = document.querySelector(`tr:has(#icon-url-${category}) img`);
+                    iconPreview.src = data.path;
+                    document.getElementById(`icon-url-${category}`).value = data.path;
+                } else {
+                    showNotification(data.error || 'Erreur lors de la mise à jour de l\'icône', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showNotification('Erreur lors de la mise à jour de l\'icône', 'error');
+            }
+        }
+
+        async function resetIcons() {
+            if (!confirm('Êtes-vous sûr de vouloir réinitialiser toutes les icônes ?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/admin/reset_icons', {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Icônes réinitialisées avec succès');
+                    // Recharger la page pour afficher les icônes par défaut
+                    location.reload();
+                } else {
+                    showNotification(data.error || 'Erreur lors de la réinitialisation des icônes', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showNotification('Erreur lors de la réinitialisation des icônes', 'error');
+            }
+        }
+
+        // Fonctions pour le drag & drop des icônes
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(event) {
+            event.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(event, category) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('dragover');
+            
+            const file = event.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                uploadImage(file, category);
+            }
+        }
+
+        function handleFileSelect(event, category) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                uploadImage(file, category);
+            }
+        }
+
+        async function uploadImage(file, category) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('category', category);
+
+            try {
+                console.log('Envoi du fichier:', {
+                    nom: file.name,
+                    taille: file.size,
+                    type: file.type,
+                    categorie: category
+                });
+
+                const response = await fetch('/admin/upload_icon', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showNotification('Icône mise à jour avec succès', 'success');
+                    // Recharger la page pour afficher les nouvelles icônes
+                    location.reload();
+                } else {
+                    showNotification(data.error || 'Erreur lors de la mise à jour de l\'icône', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showNotification('Erreur lors de la mise à jour de l\'icône', 'error');
+            }
+        }
     </script>
 </body>
 </html> 
